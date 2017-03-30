@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import NewsCard from '../NewsCard/NewsCard';
 
 
@@ -12,6 +13,23 @@ class NewsPanel extends React.Component{
 
     componentDidMount(){
         this.loadMoreNews();
+
+        // preload enough news avoid current window height larger than web page height
+        if(window.innerHeight >= document.body.offsetHeight){
+            this.loadMoreNews();
+        }
+
+        this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
+        window.addEventListener('scroll', ()=>{
+            let scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+            // scrollY: current scroll height from to the top of entire web page.
+            // window.innerHeight: height of current window, not the entire web page height
+            // document.body.offsetHeight: the entire web page height
+            if ((window.innerHeight + scrollY) >= (document.body.offsetHeight)) {
+                // console.log('Loading more news');
+                this.loadMoreNews();
+            }
+        });
     }
 
     loadMoreNews(){
@@ -29,7 +47,7 @@ class NewsPanel extends React.Component{
     renderNews(){
         let news_list = this.state.news.map((news) => {
             return (
-                <li className="collection-item" key={news.digest}>
+                <li className="collection-item">
                     <NewsCard news={news}/>
                 </li>
             );
