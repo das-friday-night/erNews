@@ -1,3 +1,3 @@
 import mongoDB
 
-print mongoDB.get()
+print mongoDB.getCount()

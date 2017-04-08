@@ -11,6 +11,7 @@
 7. (server) install [jayson](https://github.com/tedeh/jayson) : rpc client
 8. install [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 9. (backend-server) install pymongo
+10. (backend-server) install pika
 
 * To start either client or server by itself: `npm start`
 * In script section of client/package.json. Except `npm start`, all other command need to do it with `run`, 

@@ -1,4 +1,5 @@
 import pyjsonrpc
+import utils.mongoDB as mongoDB
 
 SERVER_HOST = 'localhost'
 SERVER_PORT = 4040
@@ -10,6 +11,9 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         """Test method"""
         return a + b
 
+    @pyjsonrpc.rpcmethod
+    def getNews(self):
+        return mongoDB.getNews()
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(

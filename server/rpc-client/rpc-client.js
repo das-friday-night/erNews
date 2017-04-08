@@ -15,7 +15,15 @@ function add(a, b, callback){
     });
 }
 
+function getNews(){
+    client.request('getNews', [], function(err, response) {
+        if(err) throw err;
+        console.log(response);
+    });
+}
+
 module.exports = {
-    add : add
+    add : add,
+    getNews : getNews
 }
 
