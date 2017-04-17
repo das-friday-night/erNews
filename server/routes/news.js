@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
                 'url': "https://techcrunch.com/2017/03/23/zero-motorcycles-cto-abe-askenazi-on-the-future-of-two-wheeled-evs/",
                 'urlToImage': "https://tctechcrunch2011.files.wordpress.com/2017/03/screen-shot-2017-03-23-at-14-04-01.png?w=764&h=400&crop=1",
                 'source': 'techcrunch',
-                'digest':"3RjuEomJo26O1syZbUdOHA==\n",
+                'digest':"3RjuEomJo26O1sysbUdOHA==\n",
                 'time':"Today",
                 'reason':"Hot"
             },

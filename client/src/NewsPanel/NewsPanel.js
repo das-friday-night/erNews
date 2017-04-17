@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import NewsCard from '../NewsCard/NewsCard';
+import Auth from '../Auth/Auth';
 
 
 class NewsPanel extends React.Component{
@@ -13,12 +14,8 @@ class NewsPanel extends React.Component{
 
     componentDidMount(){
         this.loadMoreNews();
-
-        // preload enough news avoid current window height larger than web page height
-        if(window.innerHeight >= document.body.offsetHeight){
-            this.loadMoreNews();
-        }
-
+        
+        // debounce effect every 1 sec
         this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
         window.addEventListener('scroll', ()=>{
             let scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
@@ -36,7 +33,10 @@ class NewsPanel extends React.Component{
         fetch('http://localhost:3000/news', {
             method: 'GET',
             mode: 'cors',
-            headers: new Headers({'Content-Type': 'application/json'}),
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': 'bearer ' + Auth.getToken()
+            }),
             cache: 'no-cache'
         }).then((res) =>  res.json())
             .then((res) => {
@@ -47,6 +47,7 @@ class NewsPanel extends React.Component{
     renderNews(){
         let news_list = this.state.news.map((news) => {
             return (
+                // <li className="collection-item" key={news.digest}>
                 <li className="collection-item">
                     <NewsCard news={news}/>
                 </li>
