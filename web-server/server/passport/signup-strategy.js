@@ -19,8 +19,6 @@ module.exports = new PassportLocalStrategy({
 
     newPotentialUser.save(err => {
         if(err) {
-            console.log("Error in saving signup data to mongo");
-            console.log(err);
             return done(err);
         }
         console.log('New user saved in user database');
