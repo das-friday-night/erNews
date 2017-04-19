@@ -26,7 +26,7 @@ class SignUpPage extends React.Component {
         const password = this.state.user.password;
         const confirm_password = this.state.user.confirm_password;
 
-        // TODO: what happens if two are not the same
+        // form will not be submit if password not confirmed
         if (password!==confirm_password) return;
 
         fetch('http://localhost:3000/auth/signup', {

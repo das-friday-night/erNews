@@ -38,7 +38,7 @@ module.exports = new PassportLocalStrategy({
             const payload = {sub: user._id};
             const token = jwt.sign(payload, config['jwtSecret']);
             const data = {name: user.email};
-            // TODO: what is the third params
+            // data: for the client to know token corresponding to which user
             return done(null, token, data);
         });
     });

@@ -3,7 +3,8 @@ const config = require('../config/config.json');
 const User = require('../models/user');
 
 module.exports = (req, res, next) => {
-    //TODO: header authorization is set where?
+    // header authorization is set in NewsPanel.js in client
+    // every time when client ask for news from server, it add an authorization header in the request
     if(!req.headers.authorization) return res.status(401).end();
 
     // get the last part from a authorization header string like "bearer token-value"
