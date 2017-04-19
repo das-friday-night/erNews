@@ -15,6 +15,7 @@ class RabbitMQ:
         self.channel.basic_publish(exchange='', routing_key=self.queueName, body=json.dumps(message))
         print "[X] sent message to %s: %s" % (self.queueName, message)
         return
+        
     def getMessage(self):
         method_frame, header_frame, body = self.channel.basic_get(self.queueName)
         if method_frame:

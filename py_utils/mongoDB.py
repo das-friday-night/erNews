@@ -2,10 +2,11 @@ import json
 
 from pymongo import MongoClient
 from bson.json_util import dumps
+from config import MONGO
 
-MONGO_HOST = 'localhost'
-MONGO_PORT = '27017'
-DB_NAME = 'erNews'
+MONGO_HOST = MONGO['HOST']
+MONGO_PORT = MONGO['PORT']
+DB_NAME = MONGO['DB_NAME']
 
 client = MongoClient("%s:%s" % (MONGO_HOST, MONGO_PORT))
 

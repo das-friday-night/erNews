@@ -1,8 +1,11 @@
 import pyjsonrpc
-import utils.mongoDB as mongoDB
+import sys
+sys.path.append("..")
+import py_utils.mongoDB as mongoDB
+from py_utils.config import RPC_SERVER
 
-SERVER_HOST = 'localhost'
-SERVER_PORT = 4040
+SERVER_HOST = RPC_SERVER['HOST']
+SERVER_PORT = RPC_SERVER['PORT']
 
 class RequestHandler(pyjsonrpc.HttpRequestHandler):
 

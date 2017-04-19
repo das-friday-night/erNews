@@ -34,10 +34,13 @@
 26. (server) initialize passport and setup auth-checker in app.js
 27. (server) create route middleware auth.js to handle logic of '/auth'
 
+28. (py-utils) install requests
+29. (py-utils) install redis
 
 * To start either client or server by itself: `npm start`
 * In script section of client/package.json. Except `npm start`, all other command need to do it with `run`, 
   for example: `npm run build` to build the react project.
+* All python file or folder should be named in _ style but NOT - style. Since the import not work with - 
 
 
 **Remember to check out all the TODO questions**
