@@ -36,6 +36,14 @@
 
 28. (py-utils) install requests
 29. (py-utils) install redis
+30. (news-pipline) create news monitor
+31. (news-pipline) install newspaper
+    1. sudo apt-get install python-dev
+    2. sudo apt-get install libxml2-dev libxslt-dev -y
+    3. sudo apt-get install libjpeg-dev zlib1g-dev libpng12-dev -y
+    4. sudo pip install newspaper
+    5. curl https://raw.githubusercontent.com/codelucas/newspaper/master/download_corpora.py | python2.7
+32. (news-pipline) create news scraper
 
 * To start either client or server by itself: `npm start`
 * In script section of client/package.json. Except `npm start`, all other command need to do it with `run`, 

@@ -27,5 +27,6 @@ def getNewsFromNewsAPI(sources=NEWSAPI['DEFAULT_SOURCES'], sort=NEWSAPI['DEFUALT
             for news in response['articles']:
                 news['source'] = response['source']
 
+            # addend news to return variable.
             articles.extend(response['articles'])
     return articles

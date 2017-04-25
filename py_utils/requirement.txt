@@ -1,3 +1,6 @@
+dateutil
+lxml
+newspaper
 python-jsonrpc
 pymongo
 pika
