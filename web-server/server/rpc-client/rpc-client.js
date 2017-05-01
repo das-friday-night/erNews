@@ -15,10 +15,10 @@ function add(a, b, callback){
     });
 }
 
-function getNews(){
-    client.request('getNews', [], function(err, response) {
+function getNews(userID, pageID, callback){
+    client.request('getNews', [userID, pageID], function(err, response) {
         if(err) throw err;
-        console.log(response);
+        callback(response.result);
     });
 }
 

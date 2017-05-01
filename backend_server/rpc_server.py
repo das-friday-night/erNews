@@ -1,8 +1,8 @@
 import pyjsonrpc
-import sys
-sys.path.append("..")
-import py_utils.mongoDB as mongoDB
-from py_utils.config import RPC_SERVER
+import sys, os
+import rpc_server_util as util
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
+from config import RPC_SERVER
 
 SERVER_HOST = RPC_SERVER['HOST']
 SERVER_PORT = RPC_SERVER['PORT']
@@ -15,8 +15,8 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         return a + b
 
     @pyjsonrpc.rpcmethod
-    def getNews(self):
-        return mongoDB.getNews()
+    def getNews(self, userID, pageID):
+        return util.getNews(userID, pageID)
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(

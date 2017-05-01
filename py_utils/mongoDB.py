@@ -1,15 +1,13 @@
 import json
 
-from pymongo import MongoClient
+import pymongo
 from bson.json_util import dumps
 from config import MONGO
 
-HOST = MONGO['HOST']
-PORT = MONGO['PORT']
 DB = MONGO['NEWS_DB']
 COLLECTION = MONGO['NEWS_COLLECTION']
 
-client = MongoClient("%s:%s" % (HOST, PORT))
+client = pymongo.MongoClient("%s:%s" % (MONGO['HOST'], MONGO['PORT']))
 
 def getCount(db=DB, collection=COLLECTION):
     db = client[db]
@@ -18,7 +16,7 @@ def getCount(db=DB, collection=COLLECTION):
 
 def getNews(db=DB, collection=COLLECTION):
     db = client[db]
-    news = db[collection].find(limit=10)
+    news = db[collection].find().sort('publishedAt', pymongo.DESCENDING).limit(MONGO['FIND_AMOUNT'])
     news = list(news)
     news = dumps(news)
     return json.loads(news)

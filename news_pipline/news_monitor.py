@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-import sys
-sys.path.append('..')
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 import redis
 import hashlib
 import datetime
-from py_utils.config import QUE_MONITOR_SCRAPER, REDIS, SLEEP
-from py_utils.rabbitMQ import RabbitMQ
-from py_utils.newsapi_client import getNewsFromNewsAPI
+from config import QUE_MONITOR_SCRAPER, REDIS, SLEEP
+from rabbitMQ import RabbitMQ
+from newsapi_client import getNewsFromNewsAPI
 
 # set up rabbitMQ between monitor and scraper
 mqClient = RabbitMQ(QUE_MONITOR_SCRAPER['URI'], QUE_MONITOR_SCRAPER['NAME'])
@@ -22,6 +22,7 @@ while True:
         newsAmount = 0
         for news in newslist:
             digest = hashlib.md5(news['title'].encode('utf-8')).digest().encode('base64')
+            # if we never seen this news in past day
             if redisClient.get(digest) is None:
                 news['digest'] = digest
                 newsAmount = newsAmount + 1
@@ -32,5 +33,8 @@ while True:
                 redisClient.expire(digest, REDIS['NEWS_EXPIRATION'])
 
                 mqClient.sendMessage(news)
+
+            # if we seen this news in past day, ignore it.
+            
         print 'fetched %d new news.' % newsAmount
     mqClient.sleep(SLEEP['MONITOR'])

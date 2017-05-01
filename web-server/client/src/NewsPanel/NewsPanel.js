@@ -8,7 +8,9 @@ class NewsPanel extends React.Component{
     constructor(){
         super();
         this.state = {
-            news: null
+            news: null,
+            pageID: 0,
+            loadedAll: false
         };
     }
 
@@ -30,7 +32,8 @@ class NewsPanel extends React.Component{
     }
 
     loadMoreNews(){
-        fetch('http://localhost:3000/news', {
+        let url = 'http://localhost:3000/news/userID/' + Auth.getEmail() + "/pageID/" + this.state.pageID;
+        fetch(url, {
             method: 'GET',
             mode: 'cors',
             headers: new Headers({
@@ -38,17 +41,26 @@ class NewsPanel extends React.Component{
                 'Authorization': 'bearer ' + Auth.getToken()
             }),
             cache: 'no-cache'
-        }).then((res) =>  res.json())
-            .then((res) => {
-                this.setState( {news: this.state.news ? this.state.news.concat(res.news):res.news} );
-            });
+        }).then((res) => { 
+            return res.json();
+        }).then((res) => {
+            if(!res || res.news.length === 0) {
+                this.setState({loadedAll : true});
+            } else {
+                this.setState({
+                    news: this.state.news ? this.state.news.concat(res.news):res.news,
+                    pageID: this.state.pageID + 1,
+                    loadedAll: false
+                });
+            }  
+        });
     }
 
     renderNews(){
         let news_list = this.state.news.map((news) => {
             return (
-                // <li className="collection-item" key={news.digest}>
-                <li className="collection-item">
+                // <li className="collection-item">
+                <li className="collection-item" key={news.digest}>
                     <NewsCard news={news}/>
                 </li>
             );

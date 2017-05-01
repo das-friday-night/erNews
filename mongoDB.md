@@ -30,3 +30,23 @@ $ db.createCollection("collection_name")
 
 # remove All Documents from a Collection
 $ db.collection_name.remove( { } )
+
+## Notes on pymongo
+ans = db[collection].find()
+* ans is a pymongo.cursor object. 
+* to use it in python, we needs bson.json_util.dumps to convert it to str object.
+
+```python
+from bson import Binary, Code
+from bson.json_util import dumps
+dumps([{'foo': [1, 2]},
+        {'bar': {'hello': 'world'}},
+        {'code': Code("function x() { return 1; }", {})},
+        {'bin': Binary(b"")}])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'[{"foo": [1, 2]}, {"bar": {"hello": "world"}}, {"code": {"$code": "function x() { return 1; }", "$scope": {}}}, {"bin": {"$binary": "AQIDBA==", "$type": "00"}}]'
+
+```
+
+ans = db[collection].find_one()
+* ans is a dict object. we can use it directly

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
 import datetime
 from dateutil import parser
 from sklearn.feature_extraction.text import TfidfVectorizer
-sys.path.append('..')
-from py_utils.config import QUE_SCRAPER_DEDUPER, MONGO, TFIDF, SLEEP
-from py_utils.rabbitMQ import RabbitMQ
-from py_utils.mongoDB import getCollection
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
+from config import QUE_SCRAPER_DEDUPER, MONGO, TFIDF, SLEEP
+from rabbitMQ import RabbitMQ
+from mongoDB import getCollection
 
 scraperToDeduperClient = RabbitMQ(QUE_SCRAPER_DEDUPER['URI'], QUE_SCRAPER_DEDUPER['NAME'])
 

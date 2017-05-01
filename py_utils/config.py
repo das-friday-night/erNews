@@ -6,6 +6,7 @@ RPC_SERVER = {
 MONGO = {
     'HOST': 'localhost',
     'PORT': '27017',
+    'FIND_AMOUNT': 100,
     'NEWS_DB': 'test',
     'NEWS_COLLECTION': 'news'
 }
@@ -33,10 +34,13 @@ SLEEP = {
     'DEDUPER': 5
 }
 
+PAGINATION = 10
+
 REDIS = {
     'HOST': 'localhost',
     'PORT': 6379,
-    'NEWS_EXPIRATION': 3600*24
+    'NEWS_EXPIRATION': 3600*24,
+    'DIGEST_EXPIRATION': 600
 }
 
 TFIDF = {

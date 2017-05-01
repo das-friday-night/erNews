@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import sys
-sys.path.append('..')
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 from newspaper import Article
 
-from py_utils.config import QUE_MONITOR_SCRAPER, QUE_SCRAPER_DEDUPER, SLEEP
-from py_utils.rabbitMQ import RabbitMQ
+from config import QUE_MONITOR_SCRAPER, QUE_SCRAPER_DEDUPER, SLEEP
+from rabbitMQ import RabbitMQ
 
 monitorToScraperClient = RabbitMQ(QUE_MONITOR_SCRAPER['URI'], QUE_MONITOR_SCRAPER['NAME'])
 scraperToDeduperClient = RabbitMQ(QUE_SCRAPER_DEDUPER['URI'], QUE_SCRAPER_DEDUPER['NAME'])

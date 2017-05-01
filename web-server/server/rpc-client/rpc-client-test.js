@@ -3,8 +3,8 @@
 
 var client = require('./rpc-client');
 
-client.add(1,1,function(res){
-    console.assert(res == 2);
-});
 
-client.getNews();
+client.getNews('XiaoWang',0,function(res){
+    console.log(res.length);
+    console.log(Array.isArray(res));
+});
