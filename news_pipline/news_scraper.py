@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 from newspaper import Article
 
-from py_utils.config import QUE_MONITOR_SCRAPER, QUE_SCRAPER_DEDUPER
+from py_utils.config import QUE_MONITOR_SCRAPER, QUE_SCRAPER_DEDUPER, SLEEP
 from py_utils.rabbitMQ import RabbitMQ
 
 monitorToScraperClient = RabbitMQ(QUE_MONITOR_SCRAPER['URI'], QUE_MONITOR_SCRAPER['NAME'])
@@ -20,7 +20,7 @@ def handler(news):
     article.parse()
 
     if article.text and article.text is not None:
-        print article.text
+        # print article.text
         news['text'] = article.text
         scraperToDeduperClient.sendMessage(news)
         monitorToScraperClient.ackMessage()
@@ -39,4 +39,4 @@ while True:
             pass
     else:
         print 'No new news to scrape'
-    monitorToScraperClient.sleep(QUE_MONITOR_SCRAPER['SLEEP_SECONDS'])
+    monitorToScraperClient.sleep(SLEEP['SCRAPER'])

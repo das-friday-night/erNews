@@ -14,14 +14,16 @@ class RabbitMQ:
 
     def sendMessage(self, message):
         self.channel.basic_publish(exchange='', routing_key=self.queueName, body=json.dumps(message))
-        print "[X] sent message to %s: %s" % (self.queueName, message)
+        # print "[X] sent message to %s: %s" % (self.queueName, message)
+        print "[X] sent message to %s" % self.queueName
         return
 
     # get message from queue, to consume the message, need to call ackMessage.
     def getMessage(self):
         method_frame, header_frame, body = self.channel.basic_get(self.queueName)
         if method_frame:
-            print "[O] Received message from %s: %s" % (self.queueName, body)
+            # print "[O] Received message from %s: %s" % (self.queueName, body)
+            print "[O] Received message from %s" % self.queueName
             self.delivery_tag = method_frame.delivery_tag
             return json.loads(body)
         else:

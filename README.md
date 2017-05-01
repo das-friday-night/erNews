@@ -44,6 +44,9 @@
     4. sudo pip install newspaper
     5. curl https://raw.githubusercontent.com/codelucas/newspaper/master/download_corpora.py | python2.7
 32. (news-pipline) create news scraper
+33. (news-pipline) [install NumPy, SciPy, scikit-learn](http://scikit-learn.org/stable/install.html), dateutil
+34. (news-pipline) create news deduper
+
 
 * To start either client or server by itself: `npm start`
 * In script section of client/package.json. Except `npm start`, all other command need to do it with `run`, 

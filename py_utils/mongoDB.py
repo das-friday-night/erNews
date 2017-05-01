@@ -4,21 +4,25 @@ from pymongo import MongoClient
 from bson.json_util import dumps
 from config import MONGO
 
-MONGO_HOST = MONGO['HOST']
-MONGO_PORT = MONGO['PORT']
-DB_NAME = MONGO['DB_NAME']
+HOST = MONGO['HOST']
+PORT = MONGO['PORT']
+DB = MONGO['NEWS_DB']
+COLLECTION = MONGO['NEWS_COLLECTION']
 
-client = MongoClient("%s:%s" % (MONGO_HOST, MONGO_PORT))
+client = MongoClient("%s:%s" % (HOST, PORT))
 
-def getCount(db=DB_NAME):
+def getCount(db=DB, collection=COLLECTION):
     db = client[db]
-    count = db['news'].count()   
+    count = db[collection].count()   
     return count
 
-def getNews(db=DB_NAME):
+def getNews(db=DB, collection=COLLECTION):
     db = client[db]
-    news = db['news'].find(limit=10)
+    news = db[collection].find(limit=10)
     news = list(news)
     news = dumps(news)
     return json.loads(news)
 
+def getCollection(db=DB, collection=COLLECTION):
+    db = client[db]
+    return db[collection]

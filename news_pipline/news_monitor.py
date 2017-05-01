@@ -4,7 +4,7 @@ sys.path.append('..')
 import redis
 import hashlib
 import datetime
-from py_utils.config import QUE_MONITOR_SCRAPER, REDIS
+from py_utils.config import QUE_MONITOR_SCRAPER, REDIS, SLEEP
 from py_utils.rabbitMQ import RabbitMQ
 from py_utils.newsapi_client import getNewsFromNewsAPI
 
@@ -33,4 +33,4 @@ while True:
 
                 mqClient.sendMessage(news)
         print 'fetched %d new news.' % newsAmount
-    mqClient.sleep(QUE_MONITOR_SCRAPER['SLEEP_SECONDS'])
+    mqClient.sleep(SLEEP['MONITOR'])

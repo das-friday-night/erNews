@@ -6,7 +6,8 @@ RPC_SERVER = {
 MONGO = {
     'HOST': 'localhost',
     'PORT': '27017',
-    'DB_NAME': 'erNews'
+    'NEWS_DB': 'test',
+    'NEWS_COLLECTION': 'news'
 }
 
 NEWSAPI = {
@@ -19,17 +20,25 @@ NEWSAPI = {
 QUE_MONITOR_SCRAPER = {
     'URI': 'amqp://uneggxcr:eElS-gADqt1sv8niqv6uzKaiCKT2mnhP@donkey.rmq.cloudamqp.com/uneggxcr',
     'NAME': 'monitor_scraper',
-    'SLEEP_SECONDS': 10
 }
 
 QUE_SCRAPER_DEDUPER = {
     'URI': 'amqp://llkcvaiq:98buUaysrg1umBoqAdVRfb9nAngHtsxq@donkey.rmq.cloudamqp.com/llkcvaiq',
     'NAME': 'scraper_deduper',
-    'SLEEP_SECONDS': 5
+}
+
+SLEEP = {
+    'MONITOR': 60,
+    'SCRAPER': 5,
+    'DEDUPER': 5
 }
 
 REDIS = {
     'HOST': 'localhost',
     'PORT': 6379,
     'NEWS_EXPIRATION': 3600*24
+}
+
+TFIDF = {
+    'SAME_NEWS_SIMILARITY_THRESHOLD': 0.85
 }

@@ -6,3 +6,7 @@ pymongo
 pika
 requests
 redis
+
+NumPy
+SciPy
+scikit-learn

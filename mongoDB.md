@@ -25,3 +25,8 @@ $ show collections
 $ use myNewDatabase
 $ db.myCollection.insertOne( { x: 1 } )
 
+# create an empty collection in current db
+$ db.createCollection("collection_name")
+
+# remove All Documents from a Collection
+$ db.collection_name.remove( { } )
