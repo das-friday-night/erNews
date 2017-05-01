@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
 import './LoginForm.css';
 
 const LoginForm = ({
@@ -51,7 +52,7 @@ const LoginForm = ({
                 </div>
 
                 <div className="row">
-                    <p className="right-align"> New to Er News? <a href="/signup">Sign Up</a></p>
+                    <p className="right-align"> New to Er News? <Link to="/signup">Sign Up</Link></p>
                 </div>
             </form>
         </div>
