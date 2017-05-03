@@ -1,5 +1,6 @@
 import pyjsonrpc
-import sys, os
+import sys
+import os
 import rpc_server_util as util
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 from config import RPC_SERVER
@@ -17,6 +18,10 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
     @pyjsonrpc.rpcmethod
     def getNews(self, userID, pageID):
         return util.getNews(userID, pageID)
+
+    @pyjsonrpc.rpcmethod
+    def logNewsClick(self, userID, newsID):
+        return util.logNewsClick(userID, newsID)
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(

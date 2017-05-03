@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import sys, os
+import sys
+import os
+from warnings import warn
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 from newspaper import Article
 
@@ -13,7 +15,7 @@ def handler(news):
     if news is None or not isinstance(news, dict):
         # news is broken need to be ignored
         monitorToScraperClient.ackMessage()
-        print 'Warning: newspaper dont handle broken news object'
+        warn('newspaper dont handle broken news object')
         return
     article = Article(news['url'])
     article.download()
@@ -25,7 +27,7 @@ def handler(news):
         scraperToDeduperClient.sendMessage(news)
         monitorToScraperClient.ackMessage()
     else: 
-        print 'Warning: newspaper parse no content from %s' % news['url']
+        warn('newspaper parse no content from %s' % news['url'])
         monitorToScraperClient.ackMessage()
 
 

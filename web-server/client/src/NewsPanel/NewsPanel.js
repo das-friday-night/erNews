@@ -19,16 +19,21 @@ class NewsPanel extends React.Component{
         
         // debounce effect every 1 sec
         this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
-        window.addEventListener('scroll', ()=>{
-            let scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-            // scrollY: current scroll height from to the top of entire web page.
-            // window.innerHeight: height of current window, not the entire web page height
-            // document.body.offsetHeight: the entire web page height
-            if ((window.innerHeight + scrollY) >= (document.body.offsetHeight)) {
-                // console.log('Loading more news');
-                this.loadMoreNews();
-            }
-        });
+        window.addEventListener('scroll', this.onScrollBottom);
+    }
+
+    componenWillUnMount() {
+        window.removeEventListener('scroll', this.onScrollBottom);
+    }
+
+    onScrollBottom() {
+        let scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+        // scrollY: current scroll height from to the top of entire web page.
+        // window.innerHeight: height of current window, not the entire web page height
+        // document.body.offsetHeight: the entire web page height
+        if ((window.innerHeight + scrollY) >= (document.body.offsetHeight)) {
+            this.loadMoreNews();
+        }
     }
 
     loadMoreNews(){

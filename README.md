@@ -47,6 +47,25 @@
 33. (news-pipline) [install NumPy, SciPy, scikit-learn](http://scikit-learn.org/stable/install.html), dateutil
 34. (news-pipline) create news deduper
 
+35. (backend-server) create rpc server util to handle pagination, modify NewsPanel.js @ client, news.js routes and rpc-client.js @ server to handle pagination.
+
+36. (recommend-service) create recommend_service: 
+    - (client) NewsCard.js listen to click, restful post to node server
+    - (server) add log transfer in news.js routes, call rpc-client logNewsClick
+    - (backend-server) rpc-server call rpc-server-util and send log rpc request to rabbitmq
+    - click log processor receive rabbitmq, handle time decay model by click
+    - create a new rpc server: recommend-server at port 5050 
+    - create a new rpc client: recommend-client in py-util
+    - recommend-client expose service for other user to get a user's preference model
+
+37. install jupyter via dockerfile
+    - sudo docker build . -t siyuanli/cs503_tensorflow_jupyter
+    - sudo docker login
+    - sudo docker push siyuanli/cs503_tensorflow_jupyter
+
+38. run jupyter
+    - docker run -it --rm -p 8888:8888 siyuanli/cs503_tensorflow_jupyter
+
 
 * To start either client or server by itself: `npm start`
 * In script section of client/package.json. Except `npm start`, all other command need to do it with `run`, 

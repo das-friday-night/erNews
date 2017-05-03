@@ -6,7 +6,7 @@ var client = jayson.client.http({
   hostname: 'localhost'
 });
 
-// invoke "add"
+// a test function
 function add(a, b, callback){
     client.request('add', [a, b], function(err, response) {
         if(err) throw err;
@@ -22,8 +22,16 @@ function getNews(userID, pageID, callback){
     });
 }
 
+function logNewsClick(userID, newsID){
+    client.request('logNewsClick', [userID, newsID], function(err, response){
+        if(err) throw err;
+        console.log(response);
+    });
+}
+
 module.exports = {
     add : add,
-    getNews : getNews
+    getNews : getNews,
+    logNewsClick : logNewsClick
 }
 

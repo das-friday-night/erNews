@@ -1,13 +1,18 @@
-import sys, os
+import sys
+import os
 import pickle
 import json
 from bson.json_util import dumps
 import redis
+from datetime import datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 import mongoDB as mongoDB
-from config import REDIS, PAGINATION
+from rabbitMQ import RabbitMQ
+from config import REDIS, PAGINATION, QUE_LOGGER
+from recommend_client import getUserPreferenceModel
 
 redisClient = redis.StrictRedis(REDIS['HOST'], REDIS['PORT'])
+logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
 
 def getNews(userID, pageID):
     pageID = int(pageID)
@@ -41,4 +46,17 @@ def getNews(userID, pageID):
         slicedNewsList = pagesOfNews[pageStartIndex : pageEndIndex]
 
     # TODO: preference model
+    preferenceModel = getUserPreferenceModel()
+    if preferenceModel is not None:
+        print preferenceModel
+        
     return json.loads(dumps(slicedNewsList))
+
+
+def logNewsClick(userID, newsID):
+    message = {
+        'userID' : userID,
+        'newsID' : newsID,
+        'timestamp': str(datetime.utcnow())
+    }
+    logClient.sendMessage(message)

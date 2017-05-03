@@ -15,12 +15,20 @@ def getCount(db=DB, collection=COLLECTION):
     return count
 
 def getNews(db=DB, collection=COLLECTION):
+    # TODO: use getCollection()
     db = client[db]
     news = db[collection].find().sort('publishedAt', pymongo.DESCENDING).limit(MONGO['FIND_AMOUNT'])
     news = list(news)
     news = dumps(news)
     return json.loads(news)
 
+def getOneNews(key, val):
+    return getCollection().find_one({key : val})
+
 def getCollection(db=DB, collection=COLLECTION):
+    db = client[db]
+    return db[collection]
+
+def getPreferences(db=MONGO['USER_DB'], collection=MONGO['USER_PREFERENCES']):
     db = client[db]
     return db[collection]

@@ -31,6 +31,11 @@ $ db.createCollection("collection_name")
 # remove All Documents from a Collection
 $ db.collection_name.remove( { } )
 
+## I/O files:
+        **This commend need to run in shell not the mongo shell**
+        - $ mongoexport --db <database-name> --collection <collection-name> --out output.json
+        - $ mongoimport --db <database-name> --collection <collection-name> --file input.json
+
 ## Notes on pymongo
 ans = db[collection].find()
 * ans is a pymongo.cursor object. 

@@ -1,10 +1,23 @@
 import React from 'react';
+import Auth from '../Auth/Auth';
 import './NewsCard.css';
 
 class NewsCard extends React.Component {
+    sendLog(){
+        let url = 'http://localhost:3000/news/userID/' + Auth.getEmail() + "/newsID/" + this.props.news.digest;
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: new Headers({'Authorization': 'bearer ' + Auth.getToken()}),
+            cache: 'no-cache'
+        });
+    }
+
     redirectUrl(url){
+        this.sendLog();
         window.open(url,'_blank');
     }
+    
     render(){
         return (
             <div className="news-container" onClick={() => {this.redirectUrl(this.props.news.url)}}>

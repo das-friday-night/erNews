@@ -2,6 +2,7 @@
 import sys, os
 import datetime
 from dateutil import parser
+from warnings import warn
 from sklearn.feature_extraction.text import TfidfVectorizer
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 from config import QUE_SCRAPER_DEDUPER, MONGO, TFIDF, SLEEP
@@ -12,11 +13,11 @@ scraperToDeduperClient = RabbitMQ(QUE_SCRAPER_DEDUPER['URI'], QUE_SCRAPER_DEDUPE
 
 def handler(news):
     if news is None or not isinstance(news, dict):
-        print 'Warning: news deduper dont handle broken news object'
+        warn('news deduper dont handle broken news object')
         scraperToDeduperClient.ackMessage()
         return
     if 'text' not in news or not news['text']:
-        print 'Warning: news %s dont have content' % news['digest']
+        warn('news %s dont have content' % news['digest'])
         scraperToDeduperClient.ackMessage()
         return
 
@@ -43,7 +44,7 @@ def handler(news):
         # drop this news if found similar news in history
         for col in range(1, colSize):
             if firstDoc_sim[0, col] > TFIDF['SAME_NEWS_SIMILARITY_THRESHOLD']:
-                print 'Warning: news deduper found news %s similar to existing one. Ignore.' % news['digest']
+                warn('news deduper found news %s similar to existing one. Ignore.' % news['digest'])
                 scraperToDeduperClient.ackMessage()
                 return
 

@@ -3,7 +3,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 import redis
 import hashlib
-import datetime
+from datetime import datetime
 from config import QUE_MONITOR_SCRAPER, REDIS, SLEEP
 from rabbitMQ import RabbitMQ
 from newsapi_client import getNewsFromNewsAPI
@@ -28,7 +28,7 @@ while True:
                 newsAmount = newsAmount + 1
                 if news['publishedAt'] is None:
                     # format: YYYY-MM-DDTHH:MM:SS in UTC
-                    news['publishedAt'] = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+                    news['publishedAt'] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
                 redisClient.set(digest, news)
                 redisClient.expire(digest, REDIS['NEWS_EXPIRATION'])
 
