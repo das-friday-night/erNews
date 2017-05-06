@@ -8,6 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 from config import QUE_SCRAPER_DEDUPER, MONGO, TFIDF, SLEEP
 from rabbitMQ import RabbitMQ
 from mongoDB import getCollection
+from news_classifier_client import classify
 
 scraperToDeduperClient = RabbitMQ(QUE_SCRAPER_DEDUPER['URI'], QUE_SCRAPER_DEDUPER['NAME'])
 
@@ -48,7 +49,9 @@ def handler(news):
                 scraperToDeduperClient.ackMessage()
                 return
 
-    # TODO: classify this news
+    # classify this news
+    if 'title' in news:
+        news['class'] = classify(news['title'])
 
     # similar news not found, save this news to database
     getCollection().replace_one({'digest': news['digest']}, news, upsert=True)

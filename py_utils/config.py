@@ -8,6 +8,11 @@ RECOMMEND_SERVER = {
     'PORT': 5050
 }
 
+NEWS_CLASSIFIER_SERVER = {
+    'HOST': 'localhost',
+    'PORT': 6060
+}
+
 MONGO = {
     'HOST': 'localhost',
     'PORT': '27017',
@@ -62,4 +67,45 @@ TFIDF = {
 
 TIME_DECAY_MODEL = {
     'ALPHA' : 0.1
+}
+
+NEWSCLASSES = {
+    "list" : [
+        "Colleges & Schools",
+        "Environmental",
+        "World",
+        "Entertainment",
+        "Media",
+        "Politics & Government",
+        "Regional News",
+        "Religion",
+        "Sports",
+        "Technology",
+        "Traffic",
+        "Weather",
+        "Economic & Corp",
+        "Advertisements",
+        "Crime",
+        "Other",
+        "Magazine"
+    ],
+    "map" : {
+        '1' : 'Colleges & Schools',
+        '2' : 'Environmental',
+        '3' : 'World',
+        '4' : 'Entertainment',
+        '5' : 'Media',
+        '6' : 'Politics & Government',
+        '7' : 'Regional News',
+        '8' : 'Religion',
+        '9' : 'Sports',
+        '10' : 'Technology',
+        '11' : 'Traffic',
+        '12' : 'Weather',
+        '13' : 'Economic & Corp',
+        '14' : 'Advertisements',
+        '15' : 'Crime',
+        '16' : 'Other',
+        '17' : 'Magazine'
+    }
 }

@@ -18,14 +18,15 @@ would bias towards more recent results more.
 from warnings import warn
 import sys
 import os
-from news_classes import newsClasses
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
-from config import QUE_LOGGER, SLEEP, TIME_DECAY_MODEL
+from config import QUE_LOGGER, SLEEP, TIME_DECAY_MODEL, NEWSCLASSES
 from rabbitMQ import RabbitMQ
 from mongoDB import getPreferences, getOneNews
 
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
 alpha = TIME_DECAY_MODEL['ALPHA']
+
+newsClasses = NEWSCLASSES['list']
 
 def handler(log):
     if not isinstance(log, dict):

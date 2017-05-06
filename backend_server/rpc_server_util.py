@@ -49,7 +49,7 @@ def getNews(userID, pageID):
     preferenceModel = getUserPreferenceModel()
     if preferenceModel is not None:
         print preferenceModel
-        
+
     return json.loads(dumps(slicedNewsList))
 
 

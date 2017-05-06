@@ -66,6 +66,18 @@
 38. run jupyter
     - docker run -it --rm -p 8888:8888 siyuanli/cs503_tensorflow_jupyter
 
+39. upload tensorflow.ipynb, go through the tutorial to learn tensorflow
+40. create news classifier service
+    - install tensorflow and pandas
+    - create news cnn model to setup convolution steps, one hot word processing, loss function, training process
+    - create classifier trainer to setup vocabulary processor, estimator, fit, prediction and accuracy calculation
+    - import all news training and testing data in labeled_news.csv
+41. expose the news classifier service as a rpc server
+    - create function to load trained model and vocabulary processor
+    - install [watchdog](https://pythonhosted.org/watchdog/) to monitor cnn model change. working as a hot starter, meaning that once new training model updated, this watchdog could update the current loaded trained model and vocabulary processor correspondingly. Notice that once model and vocabulary processor are trained with new data, the state(information) in the classifier object and the vocab_processor object are still using the outdated state. Hence, manual update needed
+42. create a classifier service rpc client in py_utils
+43. update news_scraper with classifier function before store a new news into database
+
 
 * To start either client or server by itself: `npm start`
 * In script section of client/package.json. Except `npm start`, all other command need to do it with `run`, 

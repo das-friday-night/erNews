@@ -10,3 +10,8 @@ redis
 NumPy
 SciPy
 scikit-learn
+
+tensorflow
+pandas
+
+watchdog
