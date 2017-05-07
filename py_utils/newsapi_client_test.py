@@ -1,10 +1,10 @@
 from newsapi_client import getNewsFromNewsAPI
 
 def test_basic():
-    news = getNewsFromSource()
-    print news
-    assert len(news) > 0
-    news = getNewsFromSource(sources=['bbc-news'])
+    # news = getNewsFromNewsAPI()
+    # print news
+    # assert len(news) > 0
+    news = getNewsFromNewsAPI(sources=['bbc-news'])
     assert len(news) > 0
     print 'test_basic passed!'
 

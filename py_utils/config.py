@@ -26,7 +26,23 @@ MONGO = {
 NEWSAPI = {
     'KEY': '4ed99fbbbee04fdb9b1a8426882682cc',
     'API_BASE': 'https://newsapi.org/v1/articles',
-    'DEFAULT_SOURCES': ['the-new-york-times'],
+    'DEFAULT_SOURCES': [
+        'bbc-news',
+        'bbc-sport',
+        'bloomberg',
+        'business-insider',
+        'buzzfeed',
+        'cnn',
+        'engadget',
+        'entertainment-weekly',
+        'google-news',
+        'ign',
+        'the-economist',
+        'the-wall-street-journal',
+        'the-washington-post',
+        'the-verge',
+        'the-new-york-times'
+    ],
     'DEFUALT_SORT': 'top'
 }
 
@@ -46,10 +62,20 @@ QUE_LOGGER = {
 }
 
 SLEEP = {
-    'MONITOR': 60,
-    'SCRAPER': 5,
-    'DEDUPER': 5,
-    'LOGGER' : 1
+    'MONITOR': 60.0,
+    'MONITOR_INCREASE_RATE': 1.5,
+    'MONITOR_DECREASE_RATE': 0.5,
+    'SCRAPER': 5.0,
+    'SCRAPER_INCREASE_RATE': 1.5,
+    'SCRAPER_DECREASE_RATE': 0.5,
+    'DEDUPER': 5.0,
+    'DEDUPER_INCREASE_RATE': 1.5,
+    'DEDUPER_DECREASE_RATE': 0.5,
+    'LOGGER' : 1.0,
+    'LOGGER_INCREASE_RATE': 1.5,
+    'LOGGER_DECREASE_RATE': 0.5,
+    'MIN': 0.05,
+    'MAX': 60.0*30.0
 }
 
 PAGINATION = 10

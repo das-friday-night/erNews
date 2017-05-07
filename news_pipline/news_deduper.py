@@ -11,6 +11,8 @@ from mongoDB import getCollection
 from news_classifier_client import classify
 
 scraperToDeduperClient = RabbitMQ(QUE_SCRAPER_DEDUPER['URI'], QUE_SCRAPER_DEDUPER['NAME'])
+sleepTime = SLEEP['DEDUPER']
+continuousMessageReceived = False
 
 def handler(news):
     if news is None or not isinstance(news, dict):
@@ -49,6 +51,17 @@ def handler(news):
                 scraperToDeduperClient.ackMessage()
                 return
 
+    # data cleaning on news description: 
+    # Reason:  we need description for news classifier service, more specificly, 
+    #          for machine learning
+    # Problem: some news don't have description, will cause vocabulary_processor to crash.
+    # Solution: try to fill description with title, if title missing, fill with text
+    if 'description' not in news or not news['description']:
+        if 'title' in news and news['title']:
+            news['description'] = news['title']
+        else:
+            news['description'] = news['text']
+
     # classify this news
     if 'title' in news:
         news['class'] = classify(news['title'])
@@ -62,9 +75,24 @@ def handler(news):
 while True:
     news = scraperToDeduperClient.getMessage()
     if news is not None:
+        if continuousMessageReceived:
+            if sleepTime > SLEEP['MIN']:
+                sleepTime *= SLEEP['DEDUPER_DECREASE_RATE']
+            else:
+                sleepTime = SLEEP['MIN']
+        else:
+            sleepTime = SLEEP['DEDUPER']
+            continuousMessageReceived = True
         try:
             handler(news)
         except Exception as e:
             print e 
             pass
-    scraperToDeduperClient.sleep(SLEEP['DEDUPER'])
+    
+    else: 
+        continuousMessageReceived = False
+        if sleepTime < SLEEP['MAX']:
+            sleepTime *= SLEEP['DEDUPER_INCREASE_RATE']
+        else:
+            sleepTime = SLEEP['MAX']
+    scraperToDeduperClient.sleep(sleepTime)
