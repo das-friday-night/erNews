@@ -3,7 +3,8 @@ const User = require('mongoose').model('users');
 const jwt = require('jsonwebtoken');
 const yaml = require('js-yaml');
 const fs = require('fs');
-const config = yaml.safeLoad(fs.readFileSync('../../../config.yaml', 'utf8'));
+const path = require('path');
+const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../../../config.yaml'), 'utf8'));
 
 // strategy is seperate from passport.authenticate. a way to decoupling
 module.exports = new PassportLocalStrategy({

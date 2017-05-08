@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const yaml = require('js-yaml');
 const fs = require('fs');
+const path = require('path');
 const User = require('../models/user');
-const config = yaml.safeLoad(fs.readFileSync('../../../config.yaml', 'utf8'));
+const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '../../../config.yaml'), 'utf8'));
 
 module.exports = (req, res, next) => {
     // header authorization is set in NewsPanel.js in client

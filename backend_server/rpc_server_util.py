@@ -21,6 +21,11 @@ QUE_LOGGER = config['QUE_LOGGER']
 redisClient = redis.StrictRedis(REDIS['HOST'], REDIS['PORT'])
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
 
+def convertTime(newsObj):
+    strTime = (newsObj['publishedAt']).strftime('%Y-%m-%d %H:%M')
+    newsObj['publishedAt'] = strTime.decode('utf-8')
+    return newsObj
+
 def getNews(userID, pageID):
     pageID = int(pageID)
     # inclusive
@@ -56,6 +61,10 @@ def getNews(userID, pageID):
     preferenceModel = getUserPreferenceModel(userID)
     if preferenceModel is not None:
         print preferenceModel
+
+    # convert publishedAt to string
+    # print slicedNewsList[0]['publishedAt'].strftime('%Y-%m-%d %H:%M')
+    slicedNewsList = map(lambda x: convertTime(x), slicedNewsList)
 
     return json.loads(dumps(slicedNewsList))
 

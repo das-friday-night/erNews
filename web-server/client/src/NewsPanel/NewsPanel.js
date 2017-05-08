@@ -19,7 +19,7 @@ class NewsPanel extends React.Component{
         
         // debounce effect every 1 sec
         this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
-        window.addEventListener('scroll', this.onScrollBottom);
+        window.addEventListener('scroll', this.onScrollBottom.bind(this));
     }
 
     componenWillUnMount() {

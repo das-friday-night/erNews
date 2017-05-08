@@ -1,4 +1,3 @@
-# Python config
 RPC_SERVER : {
     'HOST': 'localhost',
     'PORT': 4040

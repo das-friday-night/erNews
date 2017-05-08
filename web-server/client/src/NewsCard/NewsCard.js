@@ -33,7 +33,8 @@ class NewsCard extends React.Component {
                                 <div>
                                     {this.props.news.source != null && <div className='chip light-blue news-chip'>{this.props.news.source}</div>}
                                     {this.props.news.reason != null && <div className='chip light-green news-chip'>{this.props.news.reason}</div>}
-                                    {this.props.news.time != null && <div className='chip amber news-chip'>{this.props.news.time}</div>}
+                                    {this.props.news.publishedAt != null && <div className='chip amber lighten-1 news-chip'>{this.props.news.publishedAt}</div>}
+                                    {this.props.news.class != null && <div className='chip amber lighten-4 news-chip'>{this.props.news.class}</div>}
                                 </div>
                             </div>
                         </div>

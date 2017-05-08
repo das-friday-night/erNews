@@ -1,7 +1,7 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__),'..','py_util/config'))
+sys.path.append(os.path.join(os.path.dirname(__file__),'..','py_utils'))
 from mongoDB import getCollection
 from news_classifier_client import classify
 
