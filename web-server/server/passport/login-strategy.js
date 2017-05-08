@@ -1,7 +1,9 @@
 const PassportLocalStrategy = require('passport-local').Strategy;
 const User = require('mongoose').model('users');
 const jwt = require('jsonwebtoken');
-const config = require('../config/config.json');
+const yaml = require('js-yaml');
+const fs = require('fs');
+const config = yaml.safeLoad(fs.readFileSync('../../../config.yaml', 'utf8'));
 
 // strategy is seperate from passport.authenticate. a way to decoupling
 module.exports = new PassportLocalStrategy({
@@ -36,7 +38,7 @@ module.exports = new PassportLocalStrategy({
             }
 
             const payload = {sub: user._id};
-            const token = jwt.sign(payload, config['jwtSecret']);
+            const token = jwt.sign(payload, config['JWT_SECRET']);
             const data = {name: user.email};
             // data: for the client to know token corresponding to which user
             return done(null, token, data);

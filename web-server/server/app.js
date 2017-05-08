@@ -4,6 +4,8 @@ var express = require('express');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var path = require('path');
+var yaml = require('js-yaml');
+var fs = require('fs');
 
 var index = require('./routes/index');
 var news = require('./routes/news');
@@ -12,8 +14,8 @@ var auth = require('./routes/auth');
 var app = express();
 
 // connect mongoDB to store username and password
-var config = require('./config/config.json');
-require('./models/mongo').connect(config['mongoDbUri']);
+var config = yaml.safeLoad(fs.readFileSync('../../config.yaml','utf8'));
+require('./models/mongo').connect(config['MONGO']['URI']);
 
 // view engine setup
 app.set('views', path.join(__dirname, '../client/build/'));  // TODO: how actually use this

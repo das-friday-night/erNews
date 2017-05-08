@@ -1,9 +1,12 @@
 var jayson = require('jayson');
+var yaml = require('js-yaml');
+var fs = require('fs');
 
 // create a client
+var config = yaml.safeLoad(fs.readFileSync('../../../config.yaml','utf8'));
 var client = jayson.client.http({
-  port: 4040,
-  hostname: 'localhost'
+  port: config['RPC_SERVER']['PORT'],
+  hostname: config['RPC_SERVER']['HOST']
 });
 
 // a test function

@@ -21,7 +21,8 @@ MONGO : {
     'NEWS_DB': 'test',
     'NEWS_COLLECTION': 'news',
     'USER_DB': 'user',
-    'USER_PREFERENCES': 'preferences'
+    'USER_PREFERENCES': 'preferences',
+    'URI': 'mongodb://localhost/user'
 }
 
 NEWSAPI : {
@@ -80,6 +81,8 @@ SLEEP : {
 }
 
 PAGINATION : 10
+
+JWT_SECRET : 'a secret phrase!!'
 
 # 3600*24=86400
 REDIS : {
