@@ -1,9 +1,14 @@
 import json
 
+import os
 import pymongo
+import yaml
 from bson.json_util import dumps
-from config import MONGO
 
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+MONGO = config['MONGO']
 DB = MONGO['NEWS_DB']
 COLLECTION = MONGO['NEWS_COLLECTION']
 

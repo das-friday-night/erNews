@@ -2,11 +2,17 @@
 import sys
 import os
 from warnings import warn
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
+import yaml
 from newspaper import Article
-
-from config import QUE_MONITOR_SCRAPER, QUE_SCRAPER_DEDUPER, SLEEP
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 from rabbitMQ import RabbitMQ
+
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+QUE_MONITOR_SCRAPER = config['QUE_MONITOR_SCRAPER']
+QUE_SCRAPER_DEDUPER = config['QUE_SCRAPER_DEDUPER']
+SLEEP = config['SLEEP']
 
 monitorToScraperClient = RabbitMQ(QUE_MONITOR_SCRAPER['URI'], QUE_MONITOR_SCRAPER['NAME'])
 scraperToDeduperClient = RabbitMQ(QUE_SCRAPER_DEDUPER['URI'], QUE_SCRAPER_DEDUPER['NAME'])

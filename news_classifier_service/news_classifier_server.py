@@ -4,6 +4,7 @@ import pickle
 import os
 import sys
 import time
+import yaml
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -11,8 +12,12 @@ from tensorflow.contrib.learn.python.learn.estimators import model_fn
 from trainer.news_cnn_model import generate_cnn_model
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
-from config import NEWS_CLASSIFIER_SERVER, NEWSCLASSES
+
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+NEWS_CLASSIFIER_SERVER = config['NEWS_CLASSIFIER_SERVER']
+NEWSCLASSES = config['NEWSCLASSES']
 
 VOCAB_PROCESSOR_DIR = os.path.join(os.path.dirname(__file__), 'model/vocab_procesor_save_file')
 VARS_FILE = os.path.join(os.path.dirname(__file__), 'model/vars')

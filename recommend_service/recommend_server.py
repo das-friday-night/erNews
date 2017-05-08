@@ -1,12 +1,16 @@
-import pyjsonrpc
 import sys
 import os
 import operator
 from warnings import warn
+import yaml
+import pyjsonrpc
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
-from config import RECOMMEND_SERVER
 from mongoDB import getPreferences
 
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+RECOMMEND_SERVER = config['RECOMMEND_SERVER']
 SERVER_HOST = RECOMMEND_SERVER['HOST']
 SERVER_PORT = RECOMMEND_SERVER['PORT']
 

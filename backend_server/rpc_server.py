@@ -1,10 +1,13 @@
-import pyjsonrpc
 import sys
 import os
+import pyjsonrpc
+import yaml
 import rpc_server_util as util
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
-from config import RPC_SERVER
 
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+RPC_SERVER = config['RPC_SERVER']
 SERVER_HOST = RPC_SERVER['HOST']
 SERVER_PORT = RPC_SERVER['PORT']
 

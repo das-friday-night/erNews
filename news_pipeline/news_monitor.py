@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
-import redis
+import sys
+import os
 import hashlib
 from datetime import datetime
-from config import QUE_MONITOR_SCRAPER, REDIS, SLEEP
+import redis
+import yaml
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 from rabbitMQ import RabbitMQ
 from newsapi_client import getNewsFromNewsAPI
+
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+QUE_MONITOR_SCRAPER = config['QUE_MONITOR_SCRAPER']
+REDIS = config['REDIS']
+SLEEP = config['SLEEP']
 
 # set up rabbitMQ between monitor and scraper
 mqClient = RabbitMQ(QUE_MONITOR_SCRAPER['URI'], QUE_MONITOR_SCRAPER['NAME'])

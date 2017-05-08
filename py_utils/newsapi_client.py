@@ -1,6 +1,12 @@
 import requests
+import os
+import yaml
 from json import loads
-from config import NEWSAPI
+
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+NEWSAPI = config['NEWSAPI']
 
 def getNewsFromNewsAPI(sources=NEWSAPI['DEFAULT_SOURCES'], sort=NEWSAPI['DEFUALT_SORT']):
     articles = []

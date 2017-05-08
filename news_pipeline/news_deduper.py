@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
-import sys, os
+import sys
+import os
 import datetime
-from dateutil import parser
 from warnings import warn
+import yaml
+from dateutil import parser
 from sklearn.feature_extraction.text import TfidfVectorizer
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
-from config import QUE_SCRAPER_DEDUPER, MONGO, TFIDF, SLEEP
 from rabbitMQ import RabbitMQ
 from mongoDB import getCollection
 from news_classifier_client import classify
+
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+
+QUE_SCRAPER_DEDUPER = config['QUE_SCRAPER_DEDUPER']
+MONGO = config['MONGO']
+TFIDF = config['TFIDF']
+SLEEP = config['SLEEP']
 
 scraperToDeduperClient = RabbitMQ(QUE_SCRAPER_DEDUPER['URI'], QUE_SCRAPER_DEDUPER['NAME'])
 sleepTime = SLEEP['DEDUPER']

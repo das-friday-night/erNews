@@ -18,10 +18,18 @@ would bias towards more recent results more.
 from warnings import warn
 import sys
 import os
+import yaml
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
-from config import QUE_LOGGER, SLEEP, TIME_DECAY_MODEL, NEWSCLASSES
 from rabbitMQ import RabbitMQ
 from mongoDB import getPreferences, getOneNews
+
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+QUE_LOGGER = config['QUE_LOGGER']
+SLEEP = config['SLEEP']
+TIME_DECAY_MODEL = config['TIME_DECAY_MODEL']
+NEWSCLASSES = config['NEWSCLASSES']
 
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
 alpha = TIME_DECAY_MODEL['ALPHA']

@@ -5,11 +5,18 @@ import json
 from bson.json_util import dumps
 import redis
 from datetime import datetime
+import yaml
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 import mongoDB as mongoDB
 from rabbitMQ import RabbitMQ
-from config import REDIS, PAGINATION, QUE_LOGGER
 from recommend_client import getUserPreferenceModel
+
+f = open(os.path.join(os.path.dirname(__file__), '..', 'config.yaml'))
+config = yaml.load(f)
+f.close()
+REDIS = config['REDIS']
+PAGINATION = config['PAGINATION']
+QUE_LOGGER = config['QUE_LOGGER']
 
 redisClient = redis.StrictRedis(REDIS['HOST'], REDIS['PORT'])
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
@@ -46,7 +53,7 @@ def getNews(userID, pageID):
         slicedNewsList = pagesOfNews[pageStartIndex : pageEndIndex]
 
     # TODO: preference model
-    preferenceModel = getUserPreferenceModel()
+    preferenceModel = getUserPreferenceModel(userID)
     if preferenceModel is not None:
         print preferenceModel
 
