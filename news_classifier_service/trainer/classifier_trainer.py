@@ -22,7 +22,7 @@ MAX_DOCUMENT_LENGTH = 100
 N_CLASSES = 17
 
 # Training parms
-STEPS = 300
+STEPS = 400
 
 def main(unused_argv):
     if REMOVE_PREVIOUS_MODEL:
@@ -34,13 +34,13 @@ def main(unused_argv):
 
     # Prepare training and testing data
     df = pd.read_csv(DATA_SET_FILE, header=None)
-    train_df = df[0:400]
-    test_df = df.drop(train_df.index)
-
+    train_df = df[0:700]
     # x - news title, y - class
     x_train = train_df[1]
     # y_train [1, entry amount in x_train]
     y_train = train_df[0]
+
+    test_df = df.drop(train_df.index)
     x_test = test_df[1]
     y_test = test_df[0]
 
