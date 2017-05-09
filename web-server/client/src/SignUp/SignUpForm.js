@@ -41,7 +41,7 @@ const SignUpForm = ({
                 </div>
 
                 <div className="row right-align">
-                    <input type="submit" className="waves-effect waves-light btn indigo lighten-1" value='Sign Up' />
+                    <input type="submit" className="waves-effect waves-light btn grey lighten-2 black-text" value='Sign Up' />
                 </div>
                 
                 <div className="row">

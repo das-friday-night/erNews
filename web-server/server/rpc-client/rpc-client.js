@@ -29,7 +29,7 @@ function getNews(userID, pageID, callback){
 function logNewsClick(userID, newsID){
     client.request('logNewsClick', [userID, newsID], function(err, response){
         if(err) throw err;
-        console.log(response);
+        // console.log(response);
     });
 }
 

@@ -33,8 +33,9 @@ NEWSCLASSES = config['NEWSCLASSES']
 
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
 alpha = TIME_DECAY_MODEL['ALPHA']
-
 newsClasses = NEWSCLASSES['list']
+sleepTime = SLEEP['LOGGER']
+continuousMessageReceived = False
 
 def handler(log):
     if not isinstance(log, dict):
@@ -70,18 +71,21 @@ def handler(log):
         print 'find existing preference model for user: %s' % userID
         preferenceModel = preferenceModel[0]
 
-    print preferenceModel
+    # print preferenceModel
 
     # update preference model
     # 1.ask mongoDB what class of this newsID
     news = getOneNews('digest', newsID)
-    if (news is None 
-        or 'class' not in news
-        or news['class'] not in newsClasses):
-        print news is None
-        print 'class' not in news
-        print news['class'] not in newsClasses
-        warn("logger can't class attribute of news: %s" % newsID)
+    if news is None:
+        warn('news is None')
+        logClient.ackMessage()
+        return
+    if 'class' not in news:
+        warn('this news do not have class attribute')
+        logClient.ackMessage()
+        return
+    if news['class'] not in newsClasses:
+        warn('news has strange unknown class')
         logClient.ackMessage()
         return
 
@@ -104,10 +108,24 @@ def handler(log):
 while True:
     log = logClient.getMessage()
     if log is not None:
+        if continuousMessageReceived:
+            if sleepTime > SLEEP['MIN']:
+                sleepTime *= SLEEP['LOGGER_DECREASE_RATE']
+            else:
+                sleepTime = SLEEP['MIN']
+        else:
+            sleepTime = SLEEP['LOGGER']
+            continuousMessageReceived = True
         try:
             handler(log)
         except Exception as e:
             print e
             pass
+    else:
+        continuousMessageReceived = False
+        if sleepTime < SLEEP['MAX']:
+            sleepTime *= SLEEP['LOGGER_INCREASE_RATE']
+        else:
+            sleepTime = SLEEP['MAX']
     # remove this, if this become a bottleneck
-    logClient.sleep(SLEEP['LOGGER'])
+    logClient.sleep(sleepTime)

@@ -9,9 +9,9 @@ router.get('/userId/:userId/pageID/:pageID', function(req, res) {
     });
 });
 
-router.post('/userId/:userId/newsID/:newsID', function(req, res) {
+router.post('/userId/:userId', function(req, res) {
     let userID = req.params['userId'];
-    let newsID = req.params['newsID'];
+    let newsID = req.body['newsID'];
     rpcClient.logNewsClick(userID, newsID);
     res.status(200);
 });

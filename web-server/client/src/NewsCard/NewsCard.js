@@ -4,12 +4,16 @@ import './NewsCard.css';
 
 class NewsCard extends React.Component {
     sendLog(){
-        let url = 'http://localhost:3000/news/userID/' + Auth.getEmail() + "/newsID/" + this.props.news.digest;
+        let url = 'http://localhost:3000/news/userID/' + Auth.getEmail();
         fetch(url, {
             method: 'POST',
             mode: 'cors',
-            headers: new Headers({'Authorization': 'bearer ' + Auth.getToken()}),
-            cache: 'no-cache'
+            headers: new Headers({
+                'Authorization': 'bearer ' + Auth.getToken(),
+                'Content-Type': 'application/json'
+            }),
+            cache: 'no-cache',
+            body: JSON.stringify({newsID: this.props.news.digest})
         });
     }
 

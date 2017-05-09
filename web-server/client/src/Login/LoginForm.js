@@ -48,11 +48,11 @@ const LoginForm = ({
                 }
 
                 <div className="row right-align">
-                    <input type="submit" className="waves-effect waves-light btn indigo lighten-1" value='Log in' />
+                    <input type="submit" className="waves-effect waves-light btn grey lighten-2 black-text" value='Log in' />
                 </div>
 
                 <div className="row">
-                    <p className="right-align"> New to Er News? <Link to="/signup">Sign Up</Link></p>
+                    <p className="right-align"> New to ErNews? <Link to="/signup">Sign Up</Link></p>
                 </div>
             </form>
         </div>

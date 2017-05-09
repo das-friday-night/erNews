@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 const Base = ({ children }) => (
     <div>
-        <nav className="nav-bar indigo lighten-1">
+        <nav className="nav-bar grey darken-4">
             <div className="nav-weapper">
                 <Link to="/" className="brand-logo">ErNews</Link>
                 <ul id="nav-mobile" className="right">
@@ -17,8 +17,8 @@ const Base = ({ children }) => (
                         </div>)
                         :
                         (<div>
-                            <li><Link to="/login">Log in</Link></li>
-                            <li><Link to="/signup">Sign up</Link></li>
+                            <li><Link className="waves-effect waves-light" to="/login">Log in</Link></li>
+                            <li><Link className="waves-effect waves-light" to="/signup">Sign up</Link></li>
                         </div>)
                     }
                 </ul>
