@@ -20366,7 +20366,7 @@ ag3195
 ag153
 asbsS'max_document_length'
 p3385
-I100
+I200
 sS'_tokenizer'
 p3386
 ctensorflow.contrib.learn.python.learn.preprocessing.text

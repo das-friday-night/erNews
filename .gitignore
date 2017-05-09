@@ -21,3 +21,6 @@ yarn-error.log*
 
 # IDE
 .idea/
+
+# CNN result files
+./news_classifier_service/model

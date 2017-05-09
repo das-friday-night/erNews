@@ -1,6 +1,10 @@
 import csv
+from nltk.stem import PorterStemmer
+from nltk.tokenize import sent_tokenize, word_tokenize
 
-with open('test.csv', 'wb') as outf:
+stemmer = PorterStemmer()
+
+with open('labeled_news_stem.csv', 'wb') as outf:
 	newswriter = csv.writer(outf, delimiter=',', quotechar='"')
 
 	with open('labeled_news.csv', 'rb') as csvf:
@@ -8,18 +12,20 @@ with open('test.csv', 'wb') as outf:
 		count = 0
 		for line in newsreader:
 			count += 1
-			# print line
-			# if len(line[1]) == 0:
-			# 	print '\nnews %i: no TITILE' % count
-			# 	print line
+			if len(line[1]) == 0:
+				print '\nnews %i: no TITILE' % count
+				print line
+				continue
+
+			# news with no description, replaced by title
 			if len(line[2]) == 0:
 				print '\nnews %i: no DESCRIPTION' % count
 				line[2] = line[1]
-				newswriter.writerow(line)
-			else:
-				newswriter.writerow(line)
-			# if len(line[3]) == 0:
-			# 	print '\nnews %i: no SOURCE' % count
-			# 	print line
 
-		print 'done'
+			# stemming description
+			words = word_tokenize(line[2])
+			words_stemed = map(lambda x: stemmer.stem(x), words)
+			line[2] = " ".join(words_stemed)
+			newswriter.writerow(line)
+			
+		print 'done %i' % count

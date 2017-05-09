@@ -1,16 +1,14 @@
 import news_cnn_model
 import numpy as np
 import os
+import csv
 import pandas as pd
 import pickle
 import shutil
 import tensorflow as tf
-
 from sklearn import metrics
 
 learn = tf.contrib.learn
-
-tf.logging.set_verbosity(tf.logging.INFO)
 
 REMOVE_PREVIOUS_MODEL = True
 
@@ -18,13 +16,14 @@ MODEL_OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'model')
 DATA_SET_FILE = os.path.join(os.path.dirname(__file__), '..', 'labeled_news_stem.csv')
 VARS_FILE = os.path.join(os.path.dirname(__file__), '..', 'model/vars')
 VOCAB_PROCESSOR_SAVE_FILE = os.path.join(os.path.dirname(__file__), '..', 'model/vocab_procesor_save_file')
-MAX_DOCUMENT_LENGTH = 100
 N_CLASSES = 17
 
 # Training parms
-STEPS = 300
+steps = 100
+docLength = 200
+iteration = 1
 
-def main(unused_argv):
+def loopFunction():
     if REMOVE_PREVIOUS_MODEL:
         if os.path.exists(MODEL_OUTPUT_DIR):
             # Remove old model
@@ -36,16 +35,16 @@ def main(unused_argv):
     df = pd.read_csv(DATA_SET_FILE, header=None)
     train_df = df[0:700]
     # x - news title, y - class
-    x_train = train_df[2]
+    x_train = train_df[1]
     # y_train [1, entry amount in x_train]
     y_train = train_df[0]
 
     test_df = df.drop(train_df.index)
-    x_test = test_df[2]
+    x_test = test_df[1]
     y_test = test_df[0]
 
     # Process vocabulary
-    vocab_processor = learn.preprocessing.VocabularyProcessor(MAX_DOCUMENT_LENGTH)
+    vocab_processor = learn.preprocessing.VocabularyProcessor(docLength)
     # fit_transform: vocab_processor recognize words in x_train
     # x_train [entry amount in x_train, MAX_DOCUMENT_LENGTH]
     x_train = np.array(list(vocab_processor.fit_transform(x_train)))
@@ -69,7 +68,7 @@ def main(unused_argv):
         model_dir=MODEL_OUTPUT_DIR)
 
     # Train and predict
-    classifier.fit(x_train, y_train, steps=STEPS)
+    classifier.fit(x_train, y_train, steps=steps)
 
     # Evaluate model
     y_predicted = [
@@ -77,7 +76,29 @@ def main(unused_argv):
     ]
 
     score = metrics.accuracy_score(y_test, y_predicted)
+    with open('night_test.csv','ab') as f:
+        writer=csv.writer(f, delimiter=',')
+        writer.writerow([iteration, steps, docLength, score])
     print('Accuracy: {0:f}'.format(score))
+
+
+def main(unused_argv):
+    stepList = [100, 200, 300, 400, 500, 600, 700]
+    doclenList = [100, 200, 300, 400, 500, 600]
+    totalIteration = len(stepList)*len(doclenList)*4
+    counter = 0
+    for oneStep in stepList:
+        steps = oneStep
+        for oneDocLenth in doclenList:
+            docLength = oneDocLenth
+            for i in range(10):
+                counter += 1
+                iteration = i+1
+                print "\n>>>>>>>>>>>>>>>>>>>>>(Outer) step=%i, (Inner) docLength=%i, %ith time" % (steps, docLength, iteration)
+                loopFunction()
+                print "\n>>>>>>>>>>>>>>>>>>>>>Complete %i/%i" % (counter, totalIteration)
 
 if __name__ == '__main__':
     tf.app.run(main=main)
+
+
