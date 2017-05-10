@@ -15,7 +15,7 @@ class App extends React.Component {
                     <img src={logo1} className="logo" alt="logo" />
                     <img src={logo2} className="logo" alt="logo" />
                 </div>
-
+                <br/><br/>
                 <div className="container">
                     <div>
                         <NewsPanel/>

@@ -8,8 +8,8 @@ const LoginForm = ({
     errors,
     user
 }) => (
-    <div className="container">
-        <div className="card-panel login-panel">
+    <div className="container login-panel">
+        <div className="card-panel">
             <form className="col s12" action="/" onSubmit={onSubmit}>
                 <h4 className="center-align">Login</h4>
 

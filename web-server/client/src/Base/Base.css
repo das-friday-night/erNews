@@ -1,3 +1,8 @@
 .nav-wrapper {
 background-color: transparent;
 }
+
+.navbar-fixed {
+display: inline-block;
+/*margin-bottom: 15%;*/
+}
