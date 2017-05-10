@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import NewsCard from '../NewsCard/NewsCard';
 import Auth from '../Auth/Auth';
-
+import {Preloader} from 'react-materialize';
 
 class NewsPanel extends React.Component{
     constructor(){
@@ -86,7 +86,7 @@ class NewsPanel extends React.Component{
                 </div>
             );
         } else {
-            return (<div>Loading</div>);
+            return (<Preloader flashing size='big'/>);
         }
 
     }

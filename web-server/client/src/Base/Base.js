@@ -2,29 +2,30 @@ import React, { PropTypes } from 'react';
 import './Base.css';
 import Auth from '../Auth/Auth';
 import { Link } from 'react-router';
-
+import { Dropdown, Button, NavItem, Navbar } from 'react-materialize';
 const Base = ({ children }) => (
     <div>
         <div className="navbar-fixed">
-            <nav className="nav-bar grey darken-4">
-                <div className="nav-weapper z-depth-2">
-                    <Link to="/" className="brand-logo">ErNews</Link>
-                    <ul id="nav-mobile" className="right">
-                        {
-                            Auth.isUserAuthenticated() ?
-                            (<div>
-                                <li>{Auth.getEmail()}</li>
-                                <li><Link to="/logout">Log out</Link></li>
-                            </div>)
-                            :
-                            (<div>
-                                <li><Link className="waves-effect waves-light" to="/login">Log in</Link></li>
-                                <li><Link className="waves-effect waves-light" to="/signup">Sign up</Link></li>
-                            </div>)
-                        }
-                    </ul>
-                </div>
-            </nav>
+            <Navbar brand='ErNews' right className="grey darken-4">
+                {
+                    Auth.isUserAuthenticated() ?
+                    (<div>
+                        <NavItem>{Auth.getEmail()}</NavItem>
+                        <NavItem>
+                            <Dropdown className="teal accent-4" trigger={<Button className="grey darken-1">Profile</Button>}>
+                                <NavItem><Link to="/">Stats</Link></NavItem>
+                                <NavItem divider />
+                                <NavItem><Link to="/logout">Log out</Link></NavItem>
+                            </Dropdown>
+                        </NavItem>
+                    </div>)
+                    :
+                    (<div>
+                        <NavItem><Link className="waves-effect waves-light" to="/login">Log in</Link></NavItem>
+                        <NavItem><Link className="waves-effect waves-light" to="/signup">Sign up</Link></NavItem>
+                    </div>)
+                }
+            </Navbar>
         </div>
 
         {children}
