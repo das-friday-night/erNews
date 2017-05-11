@@ -69,6 +69,11 @@ def loopFunction(steps, docLength, iteration):
     tensors_to_log = {"opt": "softmax"}
     logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=20)
 
+    validation_monitor = tf.contrib.learn.monitors.ValidationMonitor(
+        x_test,
+        y_test,
+        every_n_steps=11)
+
     # Build model
     classifier = learn.SKCompat(learn.Estimator(
         model_fn=news_cnn_model.generate_cnn_model(N_CLASSES, n_words),
@@ -76,7 +81,7 @@ def loopFunction(steps, docLength, iteration):
         config=learn.RunConfig(save_checkpoints_secs=None, save_checkpoints_steps=10)))
 
     # Train
-    classifier.fit(x_train, y_train, steps=steps, monitors=[logging_hook])
+    classifier.fit(x_train, y_train, steps=steps, monitors=[logging_hook, validation_monitor])
 
     merged = tf.summary.merge_all()
     test_writer = tf.summary.FileWriter(MODEL_OUTPUT_DIR)
