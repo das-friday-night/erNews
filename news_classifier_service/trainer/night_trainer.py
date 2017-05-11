@@ -12,18 +12,20 @@ learn = tf.contrib.learn
 
 REMOVE_PREVIOUS_MODEL = True
 
-MODEL_OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'model')
+MODEL_OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'model_test')
 DATA_SET_FILE = os.path.join(os.path.dirname(__file__), '..', 'labeled_news_stem.csv')
-VARS_FILE = os.path.join(os.path.dirname(__file__), '..', 'model/vars')
-VOCAB_PROCESSOR_SAVE_FILE = os.path.join(os.path.dirname(__file__), '..', 'model/vocab_procesor_save_file')
+VARS_FILE = os.path.join(os.path.dirname(__file__), '..', 'model_test/vars')
+VOCAB_PROCESSOR_SAVE_FILE = os.path.join(os.path.dirname(__file__), '..', 'model_test/vocab_procesor_save_file')
 N_CLASSES = 17
 
-# Training parms
-steps = 100
-docLength = 200
-iteration = 1
+# # Training parms
+# steps = 100
+# docLength = 200
+# iteration = 1
+tf.logging.set_verbosity(tf.logging.INFO)
 
-def loopFunction():
+
+def loopFunction(steps, docLength, iteration):
     if REMOVE_PREVIOUS_MODEL:
         if os.path.exists(MODEL_OUTPUT_DIR):
             # Remove old model
@@ -62,43 +64,59 @@ def loopFunction():
 
     vocab_processor.save(VOCAB_PROCESSOR_SAVE_FILE)
 
-    # Build model
-    classifier = learn.Estimator(
-        model_fn=news_cnn_model.generate_cnn_model(N_CLASSES, n_words),
-        model_dir=MODEL_OUTPUT_DIR)
 
-    # Train and predict
-    classifier.fit(x_train, y_train, steps=steps)
+    # Set up logging for predictions
+    tensors_to_log = {"opt": "softmax"}
+    logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=20)
+
+    # Build model
+    classifier = learn.SKCompat(learn.Estimator(
+        model_fn=news_cnn_model.generate_cnn_model(N_CLASSES, n_words),
+        model_dir=MODEL_OUTPUT_DIR,
+        config=learn.RunConfig(save_checkpoints_secs=None, save_checkpoints_steps=10)))
+
+    # Train
+    classifier.fit(x_train, y_train, steps=steps, monitors=[logging_hook])
+
+    merged = tf.summary.merge_all()
+    test_writer = tf.summary.FileWriter(MODEL_OUTPUT_DIR)
+
+    # # Configure the accuracy metric for evaluation
+    # metrics = {
+    #     "accuracy":
+    #         learn.MetricSpec(metric_fn=tf.metrics.accuracy, prediction_key="classes"),
+    # }
+
+    # # Evaluate the model and print results
+    # eval_results = classifier.score(x_test, y_test, metrics=metrics)
+
+
+    # ---------------------------------------------------------------------------------
 
     # Evaluate model
-    y_predicted = [
-        p['class'] for p in classifier.predict(x_test, as_iterable=True)
-    ]
+    prediction = classifier.predict(x_test)
+    y_predicted = prediction['class']
 
     score = metrics.accuracy_score(y_test, y_predicted)
-    with open('night_test.csv','ab') as f:
-        writer=csv.writer(f, delimiter=',')
-        writer.writerow([iteration, steps, docLength, score])
+    # with open('night_test.csv','ab') as f:
+    #     writer=csv.writer(f, delimiter=',')
+    #     writer.writerow([iteration, steps, docLength, score])
     print('Accuracy: {0:f}'.format(score))
 
 
 def main(unused_argv):
-    stepList = [100, 200, 300, 400, 500, 600, 700]
-    doclenList = [100, 200, 300, 400, 500, 600]
-    totalIteration = len(stepList)*len(doclenList)*4
-    counter = 0
-    for oneStep in stepList:
-        steps = oneStep
-        for oneDocLenth in doclenList:
-            docLength = oneDocLenth
-            for i in range(10):
-                counter += 1
-                iteration = i+1
-                print "\n>>>>>>>>>>>>>>>>>>>>>(Outer) step=%i, (Inner) docLength=%i, %ith time" % (steps, docLength, iteration)
-                loopFunction()
-                print "\n>>>>>>>>>>>>>>>>>>>>>Complete %i/%i" % (counter, totalIteration)
+    # stepList = [400, 500, 600, 700]
+    # doclenList = [100, 200, 300, 400, 500, 600]
+    # totalIteration = len(stepList)*len(doclenList)*10
+    # counter = 0
+    # for oneStep in stepList:
+    #     for oneDocLenth in doclenList:
+    #         for i in range(10):
+    #             counter += 1
+    #             print "\n>>>>>>>>>>>>>>>>>>>>>(Outer) step=%i, (Inner) docLength=%i, %ith time" % (oneStep, oneDocLenth, i+1)
+    #             loopFunction(oneStep, oneDocLenth, (i+1))
+    #             print "\n>>>>>>>>>>>>>>>>>>>>>Complete %i/%i" % (counter, totalIteration)
+    loopFunction(100, 100, (1))
 
 if __name__ == '__main__':
     tf.app.run(main=main)
-
-

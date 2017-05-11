@@ -13,7 +13,7 @@ const Base = ({ children }) => (
                         <NavItem>{Auth.getEmail()}</NavItem>
                         <NavItem>
                             <Dropdown className="teal accent-4" trigger={<Button className="grey darken-1">Profile</Button>}>
-                                <NavItem><Link to="/">Stats</Link></NavItem>
+                                <NavItem><Link to="/stats">Stats</Link></NavItem>
                                 <NavItem divider />
                                 <NavItem><Link to="/logout">Log out</Link></NavItem>
                             </Dropdown>

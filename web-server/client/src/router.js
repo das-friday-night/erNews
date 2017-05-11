@@ -3,6 +3,7 @@ import App from './App/App';
 import Auth from './Auth/Auth';
 import LoginPage from './Login/LoginPage';
 import SignUp from './SignUp/SignUpPage';
+import Stats from './Stats/StatsPanel';
 
 
 // TODO: understand this component style router
@@ -16,6 +17,16 @@ const routes = {
                     callback(null, LoginPage);
                 } else {
                     callback(null, App);
+                }
+            }
+        },
+        {
+            path: '/stats',
+            getComponent: (location, callback) => {
+                if (!Auth.isUserAuthenticated()) {
+                    callback(null, LoginPage);
+                } else {
+                    callback(null, Stats);
                 }
             }
         },
@@ -36,7 +47,7 @@ const routes = {
         {
             path: '/signup',
             component: SignUp
-        },
+        }
     ]
 };
 
