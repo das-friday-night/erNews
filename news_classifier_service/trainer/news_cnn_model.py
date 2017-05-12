@@ -68,7 +68,9 @@ def generate_cnn_model(n_classes, n_words):
             'probabilities': tf.nn.softmax(logits, name="softmax")
         }
 
-        return model_fn_lib.ModelFnOps(mode=mode, predictions=predictions, loss=loss, train_op=train_op)
+        return model_fn_lib.ModelFnOps(
+            mode=mode, predictions=predictions,
+            loss=loss, train_op=train_op)
 
 
     return cnn_model
