@@ -7,6 +7,7 @@ import pickle
 import shutil
 import tensorflow as tf
 from sklearn import metrics
+from tensorflow.contrib.learn.python.learn.metric_spec import MetricSpec
 
 learn = tf.contrib.learn
 
@@ -64,15 +65,25 @@ def loopFunction(steps, docLength, iteration):
 
     vocab_processor.save(VOCAB_PROCESSOR_SAVE_FILE)
 
-
     # Set up logging for predictions
     tensors_to_log = {"opt": "softmax"}
     logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=20)
 
+    # validation monitor, log the metrics
+    # https://www.tensorflow.org/get_started/monitors
+    validation_metrics = {
+        "accuracy" : MetricSpec(
+            metric_fn=tf.contrib.metrics.streaming_accuracy, 
+            prediction_key=learn.PredictionKey.CLASSES),
+        "precision" : MetricSpec(
+            metric_fn=tf.contrib.metrics.streaming_precision, 
+            prediction_key=learn.PredictionKey.CLASSES)}
+
     validation_monitor = tf.contrib.learn.monitors.ValidationMonitor(
         x_test,
         y_test,
-        every_n_steps=11)
+        every_n_steps=11,
+        metrics=validation_metrics)
 
     # Build model
     classifier = learn.SKCompat(learn.Estimator(
@@ -81,26 +92,11 @@ def loopFunction(steps, docLength, iteration):
         config=learn.RunConfig(save_checkpoints_secs=None, save_checkpoints_steps=10)))
 
     # Train
-    classifier.fit(x_train, y_train, steps=steps, monitors=[logging_hook, validation_monitor])
-
-    merged = tf.summary.merge_all()
-    test_writer = tf.summary.FileWriter(MODEL_OUTPUT_DIR)
-
-    # # Configure the accuracy metric for evaluation
-    # metrics = {
-    #     "accuracy":
-    #         learn.MetricSpec(metric_fn=tf.metrics.accuracy, prediction_key="classes"),
-    # }
-
-    # # Evaluate the model and print results
-    # eval_results = classifier.score(x_test, y_test, metrics=metrics)
-
-
-    # ---------------------------------------------------------------------------------
+    classifier.fit(x_train, y_train, steps=steps, monitors=[validation_monitor])
 
     # Evaluate model
     prediction = classifier.predict(x_test)
-    y_predicted = prediction['class']
+    y_predicted = prediction['classes']
 
     score = metrics.accuracy_score(y_test, y_predicted)
     # with open('night_test.csv','ab') as f:

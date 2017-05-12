@@ -61,19 +61,14 @@ def generate_cnn_model(n_classes, n_words):
             tf.contrib.framework.get_global_step(),
             optimizer='Adam',
             learning_rate=LEARNING_RATE,
-            name='adam_opt')
+            name='adam_optimizer')
 
         predictions = {
-            'class': tf.argmax(input=logits, axis=1),
-            'prob': tf.nn.softmax(logits, name="softmax")
+            'classes': tf.argmax(input=logits, axis=1),
+            'probabilities': tf.nn.softmax(logits, name="softmax")
         }
 
-        return model_fn_lib.ModelFnOps(
-            mode=mode, predictions=predictions, loss=loss, train_op=train_op)
+        return model_fn_lib.ModelFnOps(mode=mode, predictions=predictions, loss=loss, train_op=train_op)
 
-        # return ({
-        #     'class': tf.argmax(logits, 1),
-        #     'prob': tf.nn.softmax(logits, name="softmax")
-        # }, loss, train_op)
 
     return cnn_model
