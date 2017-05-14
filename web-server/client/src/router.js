@@ -3,7 +3,7 @@ import App from './App/App';
 import Auth from './Auth/Auth';
 import LoginPage from './Login/LoginPage';
 import SignUp from './SignUp/SignUpPage';
-import Stats from './Stats/StatsPanel';
+import StatsPanel from './Stats/StatsPanel';
 
 
 // TODO: understand this component style router
@@ -26,7 +26,7 @@ const routes = {
                 if (!Auth.isUserAuthenticated()) {
                     callback(null, LoginPage);
                 } else {
-                    callback(null, Stats);
+                    callback(null, StatsPanel);
                 }
             }
         },

@@ -1,5 +1,6 @@
 import sys
 import os
+import operator
 import pickle
 import json
 from bson.json_util import dumps
@@ -17,6 +18,7 @@ f.close()
 REDIS = config['REDIS']
 PAGINATION = config['PAGINATION']
 QUE_LOGGER = config['QUE_LOGGER']
+NEWSCLASSES = config['NEWSCLASSES']['list']
 
 redisClient = redis.StrictRedis(REDIS['HOST'], REDIS['PORT'])
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
@@ -75,3 +77,64 @@ def logNewsClick(userID, newsID):
         'timestamp': str(datetime.utcnow())
     }
     logClient.sendMessage(message)
+
+
+"""
+newsDistribution: 
+{
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'News Distribution By Class'
+    },
+    xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges']
+    },
+    yAxis: {
+        title: {
+            text: 'News Amount'
+        }
+    },
+    series: [{
+        name: 'Jane',
+        data: [1, 0, 4]
+    }, {
+        name: 'John',
+        data: [5, 7, 3]
+    }]
+}
+"""
+def getNewsDistribution():
+    classAmountDict = {}
+    for newsClass in NEWSCLASSES:
+        amount = mongoDB.getCollection().find({'class':newsClass}).count()
+        classAmountDict[newsClass] = amount
+    classAmountList = sorted(classAmountDict.items(), key=operator.itemgetter(1), reverse=True)
+    classes = [pair[0] for pair in classAmountList]
+    amount = [pair[1] for pair in classAmountList]
+    newsDistribution = {
+        'newsDistribution' : {
+            'chart': {
+                'type': 'bar'
+            },
+            'title': {
+                'text': 'News Distribution By Class'
+            },
+            'xAxis': {
+                'categories': classes
+            },
+            'yAxis': {
+                'title': {
+                    'text': 'News Amount'
+                }
+            },
+            'series': [{
+                'data': amount
+            }],
+            'legend': {
+                'enabled': False
+            }
+        }
+    }
+    return json.loads(dumps(newsDistribution))

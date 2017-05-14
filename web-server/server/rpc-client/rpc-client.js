@@ -33,9 +33,17 @@ function logNewsClick(userID, newsID){
     });
 }
 
+function getNewsDistribution(callback) {
+    client.request('getNewsDistribution', [], function(err, response){
+        if(err) throw err;
+        callback(response.result);
+    });
+}
+
 module.exports = {
     add : add,
     getNews : getNews,
-    logNewsClick : logNewsClick
+    logNewsClick : logNewsClick,
+    getNewsDistribution: getNewsDistribution
 }
 

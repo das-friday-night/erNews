@@ -16,4 +16,10 @@ router.post('/userId/:userId', function(req, res) {
     res.status(200);
 });
 
+router.get('/distribution', function(req, res) {
+    rpcClient.getNewsDistribution(function(distribution) {
+        res.json(distribution);
+    });
+});
+
 module.exports = router;

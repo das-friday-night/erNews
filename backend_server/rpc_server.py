@@ -26,6 +26,10 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
     def logNewsClick(self, userID, newsID):
         return util.logNewsClick(userID, newsID)
 
+    @pyjsonrpc.rpcmethod
+    def getNewsDistribution(self):
+        return util.getNewsDistribution()
+
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(
     server_address = (SERVER_HOST, SERVER_PORT),

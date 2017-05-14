@@ -4,11 +4,15 @@
 var client = require('./rpc-client');
 
 
-client.getNews('xiaoming',0,function(res){
-    console.log(res.length);
-    console.log(Array.isArray(res));
-});
+// client.getNews('xiaoming',0,function(res){
+//     console.log(res.length);
+//     console.log(Array.isArray(res));
+// });
 
 // client.add(2,3, function(res){
 //     console.log(res)
 // });
+
+client.getNewsDistribution(function(res){
+    console.log(res);
+});
