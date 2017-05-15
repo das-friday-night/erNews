@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import NewsCard from '../NewsCard/NewsCard';
+import './NewsPanel.css';
 import Auth from '../Auth/Auth';
 import {Preloader} from 'react-materialize';
 
@@ -18,7 +19,7 @@ class NewsPanel extends React.Component{
         this.loadMoreNews();
         
         // debounce effect every 1 sec
-        this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
+        this.loadMoreNews = _.debounce(this.loadMoreNews, 700);
         window.addEventListener('scroll', this.onScrollBottom.bind(this));
     }
 

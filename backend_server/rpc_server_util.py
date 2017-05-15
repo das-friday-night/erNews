@@ -66,7 +66,7 @@ def getNews(userID, pageID):
     # print slicedNewsList[0]['publishedAt'].strftime('%Y-%m-%d %H:%M')
     for newsObj in slicedNewsList:
         newsTime = newsObj['publishedAt']
-        strTime = newsTime.strftime('%Y-%m-%d %H:%M')
+        strTime = datetime.strftime(newsTime, '%Y-%m-%d %H:%M')
         newsObj['publishedAt'] = strTime.decode('utf-8')
 
     return json.loads(dumps(slicedNewsList))
