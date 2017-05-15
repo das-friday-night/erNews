@@ -2,6 +2,7 @@ import sys
 import os
 import operator
 import pickle
+import math
 import json
 from bson.json_util import dumps
 import redis
@@ -19,6 +20,7 @@ REDIS = config['REDIS']
 PAGINATION = config['PAGINATION']
 QUE_LOGGER = config['QUE_LOGGER']
 NEWSCLASSES = config['NEWSCLASSES']['list']
+NEWSSOURCES = config['NEWSAPI']['DEFAULT_SOURCES']
 
 redisClient = redis.StrictRedis(REDIS['HOST'], REDIS['PORT'])
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
@@ -79,50 +81,54 @@ def logNewsClick(userID, newsID):
     logClient.sendMessage(message)
 
 
-"""
-newsDistribution: 
-{
-    chart: {
-        type: 'bar'
-    },
-    title: {
-        text: 'News Distribution By Class'
-    },
-    xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges']
-    },
-    yAxis: {
-        title: {
-            text: 'News Amount'
-        }
-    },
-    series: [{
-        name: 'Jane',
-        data: [1, 0, 4]
-    }, {
-        name: 'John',
-        data: [5, 7, 3]
-    }]
-}
-"""
+
 def getNewsDistribution():
+    # compute distribution based on class
     classAmountDict = {}
     for newsClass in NEWSCLASSES:
         amount = mongoDB.getCollection().find({'class':newsClass}).count()
         classAmountDict[newsClass] = amount
     classAmountList = sorted(classAmountDict.items(), key=operator.itemgetter(1), reverse=True)
     classes = [pair[0] for pair in classAmountList]
-    amount = [pair[1] for pair in classAmountList]
+    classAmounts = [pair[1] for pair in classAmountList]
+
+    # compute distribution based on source
+    sourceAmountDict = {}
+    for source in NEWSSOURCES:
+        amount = mongoDB.getCollection().find({'source':source}).count()
+        sourceAmountDict[source] = amount
+    sourceAmountList = sorted(sourceAmountDict.items(), key=operator.itemgetter(1), reverse=True)
+    # sourceAmountList = [('six', 6), ('six2', 6), ('two', 2), ('one', 1)]
+
+    datalist = []
+    total = sum([pair[1] for pair in sourceAmountList])
+    remin = 100.0
+    for source in sourceAmountList:
+        percentile = float(source[1])/total*100
+        percentile = math.floor(percentile*10)/10
+        print "%s: %f" % (source[0],percentile)
+        if percentile < 7.6:
+            remin = math.floor(remin*10)/10
+            datalist.append({'name': 'other sources', 'y':remin})
+            break
+        else:
+            datalist.append({'name': source[0], 'y': percentile})
+            remin = remin - percentile
+
     newsDistribution = {
-        'newsDistribution' : {
+        'class' : {
             'chart': {
-                'type': 'bar'
+                'type': 'column'
             },
             'title': {
                 'text': 'News Distribution By Class'
             },
             'xAxis': {
-                'categories': classes
+                'categories': classes,
+                'labels': {'style': {
+                    'fontFamily': 'Verdana, sans-serif',
+                    'fontSize': '13px'
+                    }}
             },
             'yAxis': {
                 'title': {
@@ -130,11 +136,42 @@ def getNewsDistribution():
                 }
             },
             'series': [{
-                'data': amount
+                'data': classAmounts
             }],
             'legend': {
                 'enabled': False
-            }
+            },
+            'credits': {
+                'enabled': False
+            },
+        },
+        'source' : {
+            'chart': {
+                'plotBackgroundColor': None,
+                'plotBorderWidth': None,
+                'plotShadow': False,
+                'type': 'pie'
+            },
+            'title': {
+                'text': 'news distribution by news sources'
+            },
+            'tooltip': {
+                'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            'plotOptions': {
+                'pie': {
+                    'allowPointSelect': True,
+                    'cursor': 'pointer',
+                    'dataLabels': {'enabled': False},
+                    'showInLegend': True
+                }
+            },
+            'series': [{
+                'name': 'source',
+                'colorByPoint': 'true',
+                'data': datalist
+            }]
         }
     }
+
     return json.loads(dumps(newsDistribution))

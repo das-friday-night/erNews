@@ -28,7 +28,7 @@ class StatsPanel extends React.Component{
         }).then((res) => {
             // console.log(res);
             this.setState({
-                newsDistribution: res.newsDistribution
+                newsDistribution: res
             });
         });
     }
@@ -37,7 +37,8 @@ class StatsPanel extends React.Component{
         if (this.state.newsDistribution){
             return (
                 <div>
-                    <ReactHighcharts config={this.state.newsDistribution}></ReactHighcharts>
+                    <ReactHighcharts config={this.state.newsDistribution.class}></ReactHighcharts>
+                    <ReactHighcharts config={this.state.newsDistribution.source}></ReactHighcharts>
                 </div>
             );
         } else {
