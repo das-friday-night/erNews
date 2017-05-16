@@ -25,6 +25,30 @@ NEWSSOURCES = config['NEWSAPI']['DEFAULT_SOURCES']
 redisClient = redis.StrictRedis(REDIS['HOST'], REDIS['PORT'])
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
 
+def reorderPagesOfNews(userID, pagesOfNews):
+    # pagesOfNews: a list of news dict obj
+    # preferenceModel: a list of new class high -> low preference. e.g:
+    """[u'Technology', u'Weather', u'Politics & Government', u'Entertainment', u'Media',
+    u'Colleges & Schools', u'Advertisements', u'Sports', u'Religion', u'Magazine', u'Other',
+    u'Traffic', u'Regional News', u'Economic & Corp', u'World', u'Crime', u'Environmental']"""
+    preferenceModel = getUserPreferenceModel(userID)
+    if preferenceModel is not None:
+        classNewsHolder = {}
+        for news in pagesOfNews:
+            if 'class' in news:
+                classNewsHolder.setdefault(news['class'], []).append(news)
+            else:
+                # news with no class
+                classNewsHolder.setdefault('unclassified', []).append(news)
+
+        pagesOfNews = []
+        preferenceModel.append('unclassified')
+        for newsClass in preferenceModel:
+            if newsClass in classNewsHolder:
+                pagesOfNews.extend(classNewsHolder[newsClass])
+
+    return pagesOfNews
+
 
 def getNews(userID, pageID):
     pageID = int(pageID)
@@ -35,7 +59,7 @@ def getNews(userID, pageID):
     if pageID>0:
         pageStartIndex = pageID*PAGINATION
         pageEndIndex = (pageID+1)*PAGINATION
-    
+
     slicedNewsList = []
     if redisClient.get(userID) is not None:
         # redis save value in string, pickle.loads convert str to dict
@@ -46,9 +70,11 @@ def getNews(userID, pageID):
         # slicedDigests = [], slicedNewsList = []
         slicedNewsList = list(mongoDB.getCollection().find({'digest': {'$in':slicedDigests}}))
     else:
-        # TODO: all user get the same inital news, how to customize.
         pagesOfNews = list(mongoDB.getNews())
+        # reorder news based on preference model
+        pagesOfNews = reorderPagesOfNews(userID, pagesOfNews)
         cachedNewsDigests = map(lambda x:x['digest'], pagesOfNews)
+        # print cachedNewsDigests
 
         # save str to redis, pickle dumps convert dict to str
         redisClient.set(userID, pickle.dumps(cachedNewsDigests))
@@ -57,14 +83,9 @@ def getNews(userID, pageID):
         # pageStartIndex > len(cachedNewsDigests): slicedNewsList = []
         slicedNewsList = pagesOfNews[pageStartIndex : pageEndIndex]
 
-    # TODO: preference model
-    preferenceModel = getUserPreferenceModel(userID)
-    if preferenceModel is not None:
-        print "preferenceModel is not use yet"
-
     # convert publishedAt to string
     # print slicedNewsList[0]['publishedAt'].strftime('%Y-%m-%d %H:%M')
-    for newsObj in slicedNewsList:
+    for newsObj in slicedNewsList: 
         newsTime = newsObj['publishedAt']
         strTime = datetime.strftime(newsTime, '%Y-%m-%d %H:%M')
         newsObj['publishedAt'] = strTime.decode('utf-8')

@@ -90,6 +90,7 @@ def handler(log):
         return
 
     clickedClass = news['class']
+    clickedSource = news['source']
 
     # 2. re-calculate preference model
     for newsClass in preferenceModel['preference']:

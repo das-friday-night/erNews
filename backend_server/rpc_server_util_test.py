@@ -1,7 +1,7 @@
 from rpc_server_util import getNews, getNewsDistribution
 from sets import Set
 
-# page1 = getNews('XiaoWang', 0)
+page1 = getNews('xiaoming2', 0)
 # print page1
 # page2 = getNews('XiaoWang', 1)
 
@@ -14,5 +14,3 @@ from sets import Set
 # assert len(page_1_set.intersection(page_2_set)) == 0
 
 # print 'test pass'
-
-print getNewsDistribution()

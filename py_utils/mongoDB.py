@@ -23,9 +23,10 @@ def getNews(db=DB, collection=COLLECTION):
     # TODO: use getCollection()
     db = client[db]
     news = db[collection].find().sort('publishedAt', pymongo.DESCENDING).limit(MONGO['FIND_AMOUNT'])
-    news = list(news)
-    news = dumps(news)
-    return json.loads(news)
+    return news
+    # news = list(news)
+    # news = dumps(news)
+    # return json.loads(news)
 
 def getOneNews(key, val):
     return getCollection().find_one({key : val})
