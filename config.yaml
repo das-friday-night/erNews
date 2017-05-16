@@ -137,5 +137,24 @@ NEWSCLASSES : {
         '15' : 'Crime',
         '16' : 'Other',
         '17' : 'Magazine'
+    },
+    "reverse_map" : {
+        "Colleges & Schools" : "1",
+        "Environmental" : "2",
+        "World" : "3",
+        "Entertainment" : "4",
+        "Media" : "5",
+        "Politics & Government" : "6",
+        "Regional News" : "7",
+        "Religion" : "8",
+        "Sports" : "9",
+        "Technology" : "10",
+        "Traffic" : "11",
+        "Weather" : "12",
+        "Economic & Corp" : "13",
+        "Advertisements" : "14",
+        "Crime" : "15",
+        "Other" : "16",
+        "Magazine" : "17"
     }
 }
