@@ -127,7 +127,7 @@ def getNewsDistribution():
     for source in sourceAmountList:
         percentile = float(source[1])/total*100
         percentile = math.floor(percentile*10)/10
-        print "%s: %f" % (source[0],percentile)
+        # print "%s: %f" % (source[0],percentile)
         if percentile < 7.6:
             remin = math.floor(remin*10)/10
             datalist.append({'name': 'other sources', 'y':remin})
