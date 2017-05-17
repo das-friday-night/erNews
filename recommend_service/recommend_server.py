@@ -26,7 +26,7 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
     def getUserPreferenceModel(self, userID):
         preferenceModel = list(getPreferences().find({'userID' : userID}))
         if len(preferenceModel) > 1:
-            warn('''one user can only have one preference model in database. 
+            warn('''one user can only have one preference model in database.
                     something wrong with the preference model''')
             return None
         elif len(preferenceModel) == 0:
@@ -55,10 +55,11 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
                 value = int(value/minValue)
                 # ternary_operators
                 # https://eastlakeside.gitbooks.io/interpy-zh/content/ternary_operators/ternary_operators.html
-                value if value < MAX_VALUE else MAX_VALUE
+                value = value if value < MAX_VALUE else MAX_VALUE
                 value_ratio_list.append(value)
 
-            return sorted_list,value_ratio_list
+            # put return value in a dict: if return seperately, return None will cause client error
+            return {'newsClassNameList': sorted_list, 'newsClassRatioList': value_ratio_list}
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(

@@ -34,68 +34,80 @@ def reorderPagesOfNews(userID, pagesOfNews):
     """[u'Technology', u'Weather', u'Politics & Government', u'Entertainment', u'Media',
     u'Colleges & Schools', u'Advertisements', u'Sports', u'Religion', u'Magazine', u'Other',
     u'Traffic', u'Regional News', u'Economic & Corp', u'World', u'Crime', u'Environmental']"""
-    preferenceModel, preferenceRatioList = getUserPreferenceModel(userID)
-    if preferenceModel is not None:
-        classNewsHolder = {}
-        for news in pagesOfNews:
-            if 'class' in news:
-                classNewsHolder.setdefault(news['class'], []).append(news)
-            else:
-                # news with no class
-                classNewsHolder.setdefault('unclassified', []).append(news)
+    # preferenceModel = getUserPreferenceModel(userID)
+    # if preferenceModel is not None:
+    #     classNewsHolder = {}
+    #     for news in pagesOfNews:
+    #         if 'class' in news:
+    #             classNewsHolder.setdefault(news['class'], []).append(news)
+    #         else:
+    #             # news with no class
+    #             classNewsHolder.setdefault('unclassified', []).append(news)
 
-        pagesOfNews = []
+    #     pagesOfNews = []
+    #     preferenceModel.append('unclassified')
+    #     for newsClass in preferenceModel:
+    #         if newsClass in classNewsHolder:
+    #             pagesOfNews.extend(classNewsHolder[newsClass])
+
+    # return pagesOfNews
+    # # -----------------------------------------------------
+    preference = getUserPreferenceModel(userID)
+    # for new user, no preference model, return original pagesOfNews
+    if preference is None:
+        return pagesOfNews
+
+    preferenceModel = preference["newsClassNameList"]
+    preferenceRatioList = preference["newsClassRatioList"]
+    # preferenceModel should have same size as preferenceRatioList
+    if len(preferenceModel) != len(preferenceRatioList):
+        warn("preferenceModel should have same size as preferenceRatioList, custom news list not functioning")
+        return pagesOfNews
+
+    # create a dict of queue to hold news from different classes
+    newsClassQueueHolder = {}
+    for news in pagesOfNews:
+        if 'class' in news:
+            # news with class attribute
+            newsClassQueueHolder.setdefault(news['class'], deque()).append(news)
+        else:
+            # news with no class
+            newsClassQueueHolder.setdefault('unclassified', deque()).append(news)
+
+    # set up variable
+    # append unclassified to preferenceModel and preferenceRatioList if needed
+    counter = len(pagesOfNews)
+    returnNewsList = []
+    if 'unclassified' in newsClassQueueHolder:
         preferenceModel.append('unclassified')
-        for newsClass in preferenceModel:
-            if newsClass in classNewsHolder:
-                pagesOfNews.extend(classNewsHolder[newsClass])
-
-    return pagesOfNews
-    # -----------------------------------------------------
-    if preferenceModel is not None 
-        and preferenceRatioList is not None 
-        and len(preferenceModel) == len(preferenceRatioList):
-        # create a dict of queue to hold news from different classes
-        newsClassQueueHolder = {}
-        for news in pagesOfNews:
-            if 'class' in news:
-                # news with class attribute
-                newsClassQueueHolder.setdefault(news['class'], deque()).append(news)
-            else:
-                # news with no class
-                newsClassQueueHolder.setdefault('unclassified', deque()).append(news)
-        
-        # set up variable and append unclassified to preferenceModel and preferenceRatioList if needed
-        counter = len(pagesOfNews)
+        preferenceRatioList.append(UNCLASSIFIED_RATIO)
+    while counter > 0:
         emptyQueueList = []
-        returnNewsList = []
-        if len(newsClassQueueHolder['unclassified']) != 0:
-            preferenceModel.append('unclassified')
-            preferenceRatioList.append(UNCLASSIFIED_RATIO)
-        while counter > 0:
-            for newsClass, preferenceRatio in zip(preferenceModel, preferenceRatioList):
+        for newsClass, preferenceRatio in zip(preferenceModel, preferenceRatioList):
+            # check if newsClassQueueHolder has queue for current newsClass
+            # if no queue match, skip that newsClass
+            if newsClass in newsClassQueueHolder:
                 # check if queue has enough item to pop, if not enough, pop reminder
                 queueSize = len(newsClassQueueHolder[newsClass])
                 if queueSize <= preferenceRatio:
                     # delete corresponding item in preferenceModel & preferenceRatioList
                     # make sure deleltion here won't affect code after
-                    emptyQueueList.append({'newsClass' : newsClass, 'preferenceRatio' : preferenceRatio}))
+                    emptyQueueList.append({
+                        'newsClass' : newsClass,
+                        'preferenceRatio' : preferenceRatio})
                     preferenceRatio = queueSize
 
                 for i in range(preferenceRatio):
-                    newsClassQueueHolder[newsClass].popleft()
+                    news = newsClassQueueHolder[newsClass].popleft()
+                    returnNewsList.append(news)
                     counter = counter - 1
-            
-            for emptyQueue in emptyQueueList:
-                preferenceModel.remove(emptyQueue['newsClass'])
-                preferenceModel.remove(emptyQueue['preferenceRatio'])
 
-        return returnNewsList
-    else:
-        # if something goes wrong, return the original pagesOfNews
-        warn("""preferenceModel is None:%r, preferenceRatioList is None:%r, len(preferenceModel)!=len(preferenceRatioList):%r""" 
-                % (preferenceModel is None, preferenceRatioList is None, len(preferenceModel) != len(preferenceRatioList)))
-        return pagesOfNews
+        for emptyQueue in emptyQueueList:
+            preferenceModel.remove(emptyQueue['newsClass'])
+            preferenceRatioList.remove(emptyQueue['preferenceRatio'])
+
+    return returnNewsList
+
 
 
 def getNews(userID, pageID):
@@ -104,7 +116,7 @@ def getNews(userID, pageID):
     pageStartIndex = 0
     # exclusive
     pageEndIndex = PAGINATION
-    if pageID>0:
+    if pageID > 0:
         pageStartIndex = pageID*PAGINATION
         pageEndIndex = (pageID+1)*PAGINATION
 
@@ -121,7 +133,7 @@ def getNews(userID, pageID):
         pagesOfNews = list(mongoDB.getNews())
         # reorder news based on preference model
         pagesOfNews = reorderPagesOfNews(userID, pagesOfNews)
-        cachedNewsDigests = map(lambda x:x['digest'], pagesOfNews)
+        cachedNewsDigests = map(lambda x: x['digest'], pagesOfNews)
         # print cachedNewsDigests
 
         # save str to redis, pickle dumps convert dict to str
@@ -133,7 +145,7 @@ def getNews(userID, pageID):
 
     # convert publishedAt to string
     # print slicedNewsList[0]['publishedAt'].strftime('%Y-%m-%d %H:%M')
-    for newsObj in slicedNewsList: 
+    for newsObj in slicedNewsList:
         newsTime = newsObj['publishedAt']
         strTime = datetime.strftime(newsTime, '%Y-%m-%d %H:%M')
         newsObj['publishedAt'] = strTime.decode('utf-8')
