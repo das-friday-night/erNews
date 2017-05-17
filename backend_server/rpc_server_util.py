@@ -7,6 +7,7 @@ import json
 from collections import deque
 from datetime import datetime
 from bson.json_util import dumps
+from warnings import warn
 import redis
 import yaml
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
@@ -22,6 +23,7 @@ PAGINATION = config['PAGINATION']
 QUE_LOGGER = config['QUE_LOGGER']
 NEWSCLASSES = config['NEWSCLASSES']['list']
 NEWSSOURCES = config['NEWSAPI']['DEFAULT_SOURCES']
+UNCLASSIFIED_RATIO = config['RECOMMEND_SERVER']['UNCLASSIFIED_RATIO']
 
 redisClient = redis.StrictRedis(REDIS['HOST'], REDIS['PORT'])
 logClient = RabbitMQ(QUE_LOGGER['URI'], QUE_LOGGER['NAME'])
@@ -57,34 +59,43 @@ def reorderPagesOfNews(userID, pagesOfNews):
         newsClassQueueHolder = {}
         for news in pagesOfNews:
             if 'class' in news:
+                # news with class attribute
                 newsClassQueueHolder.setdefault(news['class'], deque()).append(news)
             else:
                 # news with no class
                 newsClassQueueHolder.setdefault('unclassified', deque()).append(news)
         
+        # set up variable and append unclassified to preferenceModel and preferenceRatioList if needed
         counter = len(pagesOfNews)
+        emptyQueueList = []
         returnNewsList = []
         if len(newsClassQueueHolder['unclassified']) != 0:
             preferenceModel.append('unclassified')
-            preferenceRatioList.append(1)
+            preferenceRatioList.append(UNCLASSIFIED_RATIO)
         while counter > 0:
             for newsClass, preferenceRatio in zip(preferenceModel, preferenceRatioList):
                 # check if queue has enough item to pop, if not enough, pop reminder
                 queueSize = len(newsClassQueueHolder[newsClass])
                 if queueSize <= preferenceRatio:
-                    preferenceRatio = queueSize
                     # delete corresponding item in preferenceModel & preferenceRatioList
                     # make sure deleltion here won't affect code after
+                    emptyQueueList.append({'newsClass' : newsClass, 'preferenceRatio' : preferenceRatio}))
+                    preferenceRatio = queueSize
 
                 for i in range(preferenceRatio):
                     newsClassQueueHolder[newsClass].popleft()
                     counter = counter - 1
-                    
+            
+            for emptyQueue in emptyQueueList:
+                preferenceModel.remove(emptyQueue['newsClass'])
+                preferenceModel.remove(emptyQueue['preferenceRatio'])
+
+        return returnNewsList
     else:
-        print "errororororor"
-
-
-    return returnNewsList
+        # if something goes wrong, return the original pagesOfNews
+        warn("""preferenceModel is None:%r, preferenceRatioList is None:%r, len(preferenceModel)!=len(preferenceRatioList):%r""" 
+                % (preferenceModel is None, preferenceRatioList is None, len(preferenceModel) != len(preferenceRatioList)))
+        return pagesOfNews
 
 
 def getNews(userID, pageID):

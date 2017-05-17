@@ -7,6 +7,7 @@ RECOMMEND_SERVER : {
     'HOST': 'localhost',
     'PORT': 5050,
     'MAX_PREFER_RATIO': 15
+    'UNCLASSIFIED_RATIO': 1
 }
 
 NEWS_CLASSIFIER_SERVER : {
