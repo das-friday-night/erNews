@@ -10,8 +10,8 @@ f.close()
 
 TRAINER_DIR = os.path.dirname(__file__)
 NEWSCLASS = config['NEWSCLASSES']['reverse_map']
-STEM_ON = False
-CLASSDETECT_OVERWRITE_EXIST_CLASS = True
+STEM_ON = True
+CLASSDETECT_OVERWRITE_EXIST_CLASS = False
 TBDCLASS = '0'
 
 def classDetect(url):
@@ -37,7 +37,8 @@ def cleanser():
     outFile2 = 'labeled_news_tbd.csv'
     stemmer = None
     if STEM_ON:
-        outFile = 'labeled_news_cleaned_stem.csv'
+        inFile = 'labeled_news.csv'
+        outFile = 'labeled_news_stem.csv'
         stemmer = PorterStemmer()
     inFile = os.path.join(TRAINER_DIR, inFile)
     outFile = os.path.join(TRAINER_DIR, outFile)
@@ -55,13 +56,15 @@ def cleanser():
                 for line in newsreader:
                     count += 1
                     # convert existing class name to number
-                    if len(line[0]) != 0:
-                        if CLASSDETECT_OVERWRITE_EXIST_CLASS:
-                            line[0] = classDetect(line[3])
+                    # convert only those class name is not 1~17
+                    if not line[0].isdigit():
+                        if len(line[0]) != 0:
+                            if CLASSDETECT_OVERWRITE_EXIST_CLASS:
+                                line[0] = classDetect(line[3])
+                            else:
+                                line[0] = NEWSCLASS[line[0]]
                         else:
-                            line[0] = NEWSCLASS[line[0]]
-                    else:
-                        line[0] = classDetect(line[3])
+                            line[0] = classDetect(line[3])
 
                     # news with no title, skip
                     if len(line[1]) == 0:
