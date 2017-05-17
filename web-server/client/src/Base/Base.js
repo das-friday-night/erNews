@@ -7,7 +7,7 @@ import { Dropdown, Button, NavItem, Navbar } from 'react-materialize';
 const Base = ({ children }) => (
     <div>
         <div className="navbar-fixed">
-            <Navbar brand='ErNews' right className="grey darken-4">
+            <Navbar brand='  ErNews' right className="grey darken-4">
                 {
                     Auth.isUserAuthenticated() ?
                     (<div>
