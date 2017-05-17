@@ -13,6 +13,7 @@ f.close()
 RECOMMEND_SERVER = config['RECOMMEND_SERVER']
 SERVER_HOST = RECOMMEND_SERVER['HOST']
 SERVER_PORT = RECOMMEND_SERVER['PORT']
+MAX_VALUE = RECOMMEND_SERVER['MAX_PREFER_RATIO']
 
 # Ref: https://www.python.org/dev/peps/pep-0485/#proposed-implementation
 # Ref: http://stackoverflow.com/questions/5595425/what-is-the-best-way-to-compare-floats-for-almost-equality-in-python
@@ -47,7 +48,17 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
                 %s preference model''' % userID)
                 return None
 
-            return sorted_list
+            # modify sorted_value_list to a ratio list in int
+            minValue = min(sorted_value_list)
+            value_ratio_list = []
+            for value in sorted_value_list:
+                value = int(value/minValue)
+                # ternary_operators
+                # https://eastlakeside.gitbooks.io/interpy-zh/content/ternary_operators/ternary_operators.html
+                value if value < MAX_VALUE else MAX_VALUE
+                value_ratio_list.append(value)
+
+            return sorted_list,value_ratio_list
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(

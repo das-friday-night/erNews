@@ -4,9 +4,10 @@ import operator
 import pickle
 import math
 import json
+from collections import deque
+from datetime import datetime
 from bson.json_util import dumps
 import redis
-from datetime import datetime
 import yaml
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
 import mongoDB as mongoDB
@@ -31,7 +32,7 @@ def reorderPagesOfNews(userID, pagesOfNews):
     """[u'Technology', u'Weather', u'Politics & Government', u'Entertainment', u'Media',
     u'Colleges & Schools', u'Advertisements', u'Sports', u'Religion', u'Magazine', u'Other',
     u'Traffic', u'Regional News', u'Economic & Corp', u'World', u'Crime', u'Environmental']"""
-    preferenceModel = getUserPreferenceModel(userID)
+    preferenceModel, preferenceRatioList = getUserPreferenceModel(userID)
     if preferenceModel is not None:
         classNewsHolder = {}
         for news in pagesOfNews:
@@ -48,6 +49,42 @@ def reorderPagesOfNews(userID, pagesOfNews):
                 pagesOfNews.extend(classNewsHolder[newsClass])
 
     return pagesOfNews
+    # -----------------------------------------------------
+    if preferenceModel is not None 
+        and preferenceRatioList is not None 
+        and len(preferenceModel) == len(preferenceRatioList):
+        # create a dict of queue to hold news from different classes
+        newsClassQueueHolder = {}
+        for news in pagesOfNews:
+            if 'class' in news:
+                newsClassQueueHolder.setdefault(news['class'], deque()).append(news)
+            else:
+                # news with no class
+                newsClassQueueHolder.setdefault('unclassified', deque()).append(news)
+        
+        counter = len(pagesOfNews)
+        returnNewsList = []
+        if len(newsClassQueueHolder['unclassified']) != 0:
+            preferenceModel.append('unclassified')
+            preferenceRatioList.append(1)
+        while counter > 0:
+            for newsClass, preferenceRatio in zip(preferenceModel, preferenceRatioList):
+                # check if queue has enough item to pop, if not enough, pop reminder
+                queueSize = len(newsClassQueueHolder[newsClass])
+                if queueSize <= preferenceRatio:
+                    preferenceRatio = queueSize
+                    # delete corresponding item in preferenceModel & preferenceRatioList
+                    # make sure deleltion here won't affect code after
+
+                for i in range(preferenceRatio):
+                    newsClassQueueHolder[newsClass].popleft()
+                    counter = counter - 1
+                    
+    else:
+        print "errororororor"
+
+
+    return returnNewsList
 
 
 def getNews(userID, pageID):
@@ -102,7 +139,7 @@ def logNewsClick(userID, newsID):
     logClient.sendMessage(message)
 
 
-
+# this is for chart drawing
 def getNewsDistribution():
     # compute distribution based on class
     classAmountDict = {}
