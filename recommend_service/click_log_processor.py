@@ -54,7 +54,7 @@ def handler(log):
     # ask if mongoDB has this user's preference model
     preferenceModel = list(getPreferences().find({'userID' : userID}))
     if len(preferenceModel) > 1:
-        print warn('''one user can only have one preference model in database. 
+        warn('''one user can only have one preference model in database.
                  something wrong with the preference model''')
         logClient.ackMessage()
         return

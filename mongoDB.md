@@ -35,7 +35,7 @@ $ db.collection_name.remove( { } )
         **This commend need to run in shell not the mongo shell**
         - $ mongoexport --db <database-name> --collection <collection-name> --out output.json
         - $ mongoimport --db <database-name> --collection <collection-name> --file input.json
-        - $ mongoexport --db users --collection contacts --type=csv --fields name,address --out /opt/backups/contacts.csv
+        - $ mongoexport --db test --collection news --type=csv --fields class,title,description,url,source --out checkthis.csv
 
 ## Notes on pymongo
 ans = db[collection].find()

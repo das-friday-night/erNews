@@ -91,4 +91,6 @@ def cleanser():
                 print 'stem: %r. class overwrite: %r. num: %i' % (STEM_ON, CLASSDETECT_OVERWRITE_EXIST_CLASS, count)
 
 
-cleanser()
+# if this if condition not included, file who import and use classDetect will run this file
+if __name__ == "__main__":
+    cleanser()
