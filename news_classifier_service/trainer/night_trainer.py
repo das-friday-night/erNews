@@ -37,12 +37,14 @@ def loopFunction(steps, docLength, iteration):
 
     # Prepare training and testing data
     df = pd.read_csv(DATA_SET_FILE, header=None)
-    train_df = df[0:1100]
     # x - news title, y - class
+    # training data
+    train_df = df[0:1100]
     x_train = train_df[1]
     # y_train [1, entry amount in x_train]
     y_train = train_df[0]
 
+    # testing data
     test_df = df.drop(train_df.index)
     x_test = test_df[1]
     y_test = test_df[0]
@@ -58,7 +60,7 @@ def loopFunction(steps, docLength, iteration):
 
     # unique words amount in x_train
     n_words = len(vocab_processor.vocabulary_)
-    print('Total words: %d' % n_words)
+    # print('Total words: %d' % n_words)
 
     # Saving n_words and vocab_processor:
     with open(VARS_FILE, 'w') as f:
@@ -118,7 +120,7 @@ def main(unused_argv):
     #             print "\n>>>>>>>>>>>>>>>>>>>>>(Outer) step=%i, (Inner) docLength=%i, %ith time" % (oneStep, oneDocLenth, i+1)
     #             loopFunction(oneStep, oneDocLenth, (i+1))
     #             print "\n>>>>>>>>>>>>>>>>>>>>>Complete %i/%i" % (counter, totalIteration)
-    loopFunction(160, 150, (1))
+    loopFunction(120, 80, (1))
 
 if __name__ == '__main__':
     tf.app.run(main=main)

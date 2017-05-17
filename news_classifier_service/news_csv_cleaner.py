@@ -14,7 +14,7 @@ STEM_ON = True
 CLASSDETECT_OVERWRITE_EXIST_CLASS = False
 TBDCLASS = '0'
 
-def classDetect(url):
+def classDetect(text):
     corpus = {
         "World" : ["world"],
         "Entertainment" : ["movie", "art", "entertain", "tv", "season", "episode", "television", "music", "film", "theater"],
@@ -25,7 +25,7 @@ def classDetect(url):
         "Crime" : ["kill", "crime", "police", "dead", "death", "die", "murder"]
     }
     for newsclass, keylist in corpus.iteritems():
-        if any(word in url for word in keylist):
+        if any(word in text for word in keylist):
             return NEWSCLASS[newsclass]
     return TBDCLASS
 

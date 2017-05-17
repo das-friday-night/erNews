@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from news_classifier_client import classify
 
-text = "Uber Faces Federal Inquiry Over Use of Greyball Tool to Evade Authorities"
+text = "Oscars 2017: 'Moonlight' sport Best Picture after some confusion"
 
 print classify(text)

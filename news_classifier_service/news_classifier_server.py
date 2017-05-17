@@ -10,6 +10,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib.learn.python.learn.estimators import model_fn
 from trainer.news_cnn_model import generate_cnn_model
+from news_csv_cleaner import classDetect
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
@@ -38,9 +39,9 @@ def loadVocabAndModel():
     with open(VARS_FILE, 'r') as f:
         n_words = pickle.load(f)
     global classifier
-    classifier = learn.Estimator(
+    classifier = learn.SKCompat(learn.Estimator(
         model_fn=generate_cnn_model(len(newsClasses), n_words),
-        model_dir=MODEL_DIR)
+        model_dir=MODEL_DIR))
 
     # Prepare training and testing
     df = pd.read_csv('labeled_news.csv', header=None)
@@ -49,7 +50,7 @@ def loadVocabAndModel():
     x_train = train_df[1]
     x_train = np.array(list(vocab_processor.transform(x_train)))
     y_train = train_df[0]
-    classifier.evaluate(x_train, y_train)
+    classifier.score(x_train, y_train)
     print "Updated complete."
 
 class OnModelChange(FileSystemEventHandler):
@@ -70,13 +71,17 @@ loadVocabAndModel()
 class RequestHandler(pyjsonrpc.HttpRequestHandler):
     @pyjsonrpc.rpcmethod
     def classify(self, text):
-        text_series = pd.Series([text])
-        vocabTransformation = np.array(list(vocab_processor.transform(text_series)))
-        prediction = [
-            p['class'] for p in classifier.predict(vocabTransformation, as_iterable=True)
-        ]
-        print prediction
-        return newsClasses[str(prediction[0])]
+        # first predict via corpus
+        prediction = classDetect(text)
+        # if can't predict, use machine learning method
+        if prediction == '0':
+            text_series = pd.Series([text])
+            vocabTransformation = np.array(list(vocab_processor.transform(text_series)))
+            prediction = classifier.predict(vocabTransformation)
+            prediction = str(prediction['classes'][0])
+        
+        prediction = newsClasses[prediction]
+        return prediction
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(
